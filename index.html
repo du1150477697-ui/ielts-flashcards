@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>IELTS 单词闪卡</title>
+  <style>
+    :root {
+      --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --muted: #94a3b8;
+      --ok: #22c55e; --bad: #ef4444; --accent: #38bdf8; --line: #334155;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      margin: 0; min-height: 100dvh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg); color: var(--text);
+      display: flex; flex-direction: column;
+      padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom));
+    }
+    header { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 10px; font-size: 14px; color: var(--muted); }
+    header .left { display: flex; flex-direction: column; gap: 4px; }
+    #dateLabel { color: var(--accent); font-weight: 600; }
+    #progress { font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .streak {
+      background: #12263f; border: 1px solid var(--line); border-radius: 12px;
+      padding: 10px 12px; margin-bottom: 12px; display: flex; justify-content: space-between;
+      font-size: 13px; color: var(--muted);
+    }
+    .streak strong { color: var(--text); }
+    .tabs { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+    .tabs button {
+      background: #12263f; color: var(--muted); border: 1px solid var(--line);
+      border-radius: 12px; padding: 10px 8px; font-size: 14px; font-weight: 600;
+    }
+    .tabs button.active { color: #0f172a; background: var(--accent); border-color: var(--accent); }
+    .stage {
+      flex: 1; min-height: 180px; display: flex; align-items: center; justify-content: center;
+      perspective: 1000px; overflow: hidden; position: relative; z-index: 1;
+    }
+    .card {
+      width: min(100%, 420px); height: min(40dvh, 260px); position: relative; cursor: pointer;
+      transform-style: preserve-3d; transition: transform .45s ease; z-index: 1;
+    }
+    .card.flipped { transform: rotateY(180deg); }
+    .face {
+      position: absolute; inset: 0; backface-visibility: hidden; border-radius: 20px;
+      background: var(--card); border: 1px solid var(--line); display: flex; flex-direction: column;
+      align-items: center; justify-content: center; padding: 24px; text-align: center;
+      box-shadow: 0 12px 40px rgba(0,0,0,.35);
+    }
+    .face.back { transform: rotateY(180deg); }
+    .word { font-size: clamp(28px, 7vw, 44px); font-weight: 700; }
+    .hint { margin-top: 12px; font-size: 14px; color: var(--muted); }
+    .phonetic { margin-top: 8px; color: var(--accent); font-size: 17px; }
+    .band { margin-top: 8px; font-size: 12px; color: #fbbf24; }
+    .meaning { font-size: clamp(20px, 5vw, 30px); font-weight: 600; line-height: 1.35; }
+    .example { margin-top: 14px; font-size: 15px; color: var(--muted); line-height: 1.45; }
+    .actions {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px;
+      position: relative; z-index: 20; flex-shrink: 0;
+    }
+    button {
+      appearance: none; border: none; border-radius: 14px; padding: 16px 12px;
+      font-size: 16px; font-weight: 600; color: white; cursor: pointer;
+      touch-action: manipulation; -webkit-user-select: none; user-select: none;
+      position: relative; z-index: 21;
+    }
+    #btnKnow { background: var(--ok); }
+    #btnAgain { background: var(--bad); }
+    .tap { text-align: center; color: var(--muted); font-size: 13px; margin-top: 10px; }
+    .panel { display: none; flex-direction: column; gap: 12px; flex: 1; min-height: 0; }
+    .panel h2 { margin: 0; font-size: 22px; }
+    .panel p { margin: 0; color: var(--muted); line-height: 1.5; font-size: 14px; }
+    .unit-list { display: flex; flex-direction: column; gap: 8px; overflow: auto; }
+    .unit {
+      background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px;
+      display: flex; justify-content: space-between; align-items: center; gap: 10px;
+      cursor: pointer; text-align: left; color: var(--text);
+    }
+    .unit .meta { color: var(--muted); font-size: 12px; margin-top: 4px; }
+    .pill {
+      display: inline-block; margin-top: 6px; padding: 2px 8px; border-radius: 999px;
+      font-size: 11px; font-weight: 700; background: rgba(251,191,36,.15); color: #fbbf24;
+    }
+    .unit .go {
+      background: #12263f; color: var(--accent); border: 1px solid var(--line);
+      border-radius: 999px; padding: 8px 12px; font-size: 13px; flex-shrink: 0;
+    }
+    .wrong-item {
+      background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+      padding: 12px 14px; display: flex; justify-content: space-between; gap: 10px; align-items: center;
+    }
+    .wrong-item .en { font-weight: 700; }
+    .wrong-item .zh { color: var(--muted); font-size: 13px; margin-top: 4px; }
+    .wrong-item .count { color: #fca5a5; font-size: 12px; white-space: nowrap; }
+    .row-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .primary { background: var(--accent); color: #0f172a; }
+    .secondary { background: #334155; color: var(--text); }
+    .badge {
+      display: inline-block; padding: 4px 10px; border-radius: 999px;
+      background: rgba(34,197,94,.15); color: #4ade80; font-size: 13px; font-weight: 600; align-self: center;
+    }
+    .center { align-items: center; text-align: center; padding-top: 24px; }
+    .empty { color: var(--muted); text-align: center; padding: 28px 8px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="left">
+      <span>IELTS 单词闪卡 · 由易到难</span>
+      <span id="dateLabel"></span>
+    </div>
+    <span id="progress">—</span>
+  </header>
+
+  <div class="streak">
+    <span>连续打卡 <strong id="streakCount">0</strong> 天</span>
+    <span id="checkStatus">今日未打卡</span>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button type="button" data-tab="home" class="active">今日</button>
+    <button type="button" data-tab="units">单元</button>
+    <button type="button" data-tab="wrong">错题本</button>
+  </div>
+
+  <div id="home" class="panel" style="display:flex">
+    <h2 id="homeTitle">今日 10 词</h2>
+    <p id="homeDesc"></p>
+    <button class="primary" id="startBtn" type="button">开始今日学习</button>
+    <button class="secondary" id="reviewWrongBtn" type="button">先刷错题本</button>
+  </div>
+
+  <div id="units" class="panel">
+    <h2>按雅思难度分单元</h2>
+    <p>从 Band 4 基础词到 Band 8+ 学术高频词，建议按顺序学。共 <span id="totalWords">0</span> 词。</p>
+    <div class="unit-list" id="unitList"></div>
+  </div>
+
+  <div id="wrong" class="panel">
+    <h2>错题本</h2>
+    <p id="wrongDesc">标记为「不认识」的词会进入这里。</p>
+    <div class="row-btns">
+      <button class="primary" id="practiceWrongBtn" type="button">练习错题</button>
+      <button class="secondary" id="clearWrongBtn" type="button">清空错题本</button>
+    </div>
+    <div class="unit-list" id="wrongList"></div>
+  </div>
+
+  <div id="study" class="panel">
+    <div class="stage">
+      <div class="card" id="card" role="button" aria-label="翻转卡片">
+        <div class="face front">
+          <div class="word" id="word"></div>
+          <div class="phonetic" id="phonetic"></div>
+          <div class="band" id="bandFront"></div>
+          <div class="hint">点卡片看释义</div>
+        </div>
+        <div class="face back">
+          <div class="meaning" id="meaning"></div>
+          <div class="example" id="example"></div>
+          <div class="band" id="bandBack"></div>
+          <div class="hint">再点一次可翻回</div>
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <button id="btnAgain" type="button" data-action="again">不认识</button>
+      <button id="btnKnow" type="button" data-action="know">认识</button>
+    </div>
+    <div class="tap">先点卡片翻面，再选认识 / 不认识</div>
+  </div>
+
+  <div id="done" class="panel center">
+    <span class="badge" id="doneBadge">完成</span>
+    <h2 id="doneTitle">本轮结束</h2>
+    <p id="summary"></p>
+    <button class="primary" id="restart" type="button">继续练错题</button>
+    <button class="secondary" id="backHome" type="button">回首页</button>
+  </div>
+
+  <script>
+    const DAILY = 10;
+    const STORAGE_KEY = "flashcards-ielts-v1";
+
+    // Units ordered easy → hard by typical IELTS band / AWL academic difficulty
+    const UNITS = [
+      {
+        id: "u1", title: "Unit 1 · Band 4 日常基础", band: "Band 4",
+        words: [
+          { en: "agree", ipa: "/əˈɡriː/", zh: "同意", ex: "I agree with your idea.", band: "4" },
+          { en: "choose", ipa: "/tʃuːz/", zh: "选择", ex: "Choose the best answer.", band: "4" },
+          { en: "enough", ipa: "/ɪˈnʌf/", zh: "足够的", ex: "There is enough time.", band: "4" },
+          { en: "follow", ipa: "/ˈfɑːloʊ/", zh: "跟随；遵循", ex: "Follow the instructions.", band: "4" },
+          { en: "happen", ipa: "/ˈhæpən/", zh: "发生", ex: "What happened yesterday?", band: "4" },
+          { en: "learn", ipa: "/lɜːrn/", zh: "学习", ex: "I want to learn English.", band: "4" },
+          { en: "problem", ipa: "/ˈprɑːbləm/", zh: "问题", ex: "This is a common problem.", band: "4" },
+          { en: "result", ipa: "/rɪˈzʌlt/", zh: "结果", ex: "The result was good.", band: "4" },
+          { en: "simple", ipa: "/ˈsɪmpl/", zh: "简单的", ex: "Keep the plan simple.", band: "4" },
+          { en: "useful", ipa: "/ˈjuːsfl/", zh: "有用的", ex: "This tip is useful.", band: "4" }
+        ]
+      },
+      {
+        id: "u2", title: "Unit 2 · Band 5 常用扩展", band: "Band 5",
+        words: [
+          { en: "advice", ipa: "/ədˈvaɪs/", zh: "建议（名词）", ex: "She gave me good advice.", band: "5" },
+          { en: "benefit", ipa: "/ˈbenɪfɪt/", zh: "益处；受益", ex: "Exercise has many benefits.", band: "5" },
+          { en: "compare", ipa: "/kəmˈper/", zh: "比较", ex: "Compare these two charts.", band: "5" },
+          { en: "develop", ipa: "/dɪˈveləp/", zh: "发展；培养", ex: "Children develop quickly.", band: "5" },
+          { en: "effect", ipa: "/ɪˈfekt/", zh: "影响；效果", ex: "The effect is clear.", band: "5" },
+          { en: "improve", ipa: "/ɪmˈpruːv/", zh: "提高；改进", ex: "Practice can improve skills.", band: "5" },
+          { en: "increase", ipa: "/ɪnˈkriːs/", zh: "增加", ex: "Prices increased last year.", band: "5" },
+          { en: "provide", ipa: "/prəˈvaɪd/", zh: "提供", ex: "Schools provide education.", band: "5" },
+          { en: "require", ipa: "/rɪˈkwaɪər/", zh: "需要；要求", ex: "The task requires care.", band: "5" },
+          { en: "support", ipa: "/səˈpɔːrt/", zh: "支持", ex: "Parents support their children.", band: "5" }
+        ]
+      },
+      {
+        id: "u3", title: "Unit 3 · Band 5.5 考试常见", band: "Band 5.5",
+        words: [
+          { en: "achieve", ipa: "/əˈtʃiːv/", zh: "达到；实现", ex: "He achieved a high score.", band: "5.5" },
+          { en: "affect", ipa: "/əˈfekt/", zh: "影响（动词）", ex: "Stress can affect health.", band: "5.5" },
+          { en: "approach", ipa: "/əˈproʊtʃ/", zh: "方法；接近", ex: "Try a new approach.", band: "5.5" },
+          { en: "challenge", ipa: "/ˈtʃælɪndʒ/", zh: "挑战", ex: "IELTS is a challenge.", band: "5.5" },
+          { en: "consider", ipa: "/kənˈsɪdər/", zh: "考虑", ex: "Consider both sides.", band: "5.5" },
+          { en: "discuss", ipa: "/dɪˈskʌs/", zh: "讨论", ex: "Discuss the advantages.", band: "5.5" },
+          { en: "experience", ipa: "/ɪkˈspɪriəns/", zh: "经历；经验", ex: "Travel is a great experience.", band: "5.5" },
+          { en: "opportunity", ipa: "/ˌɑːpərˈtuːnəti/", zh: "机会", ex: "Study abroad is an opportunity.", band: "5.5" },
+          { en: "prefer", ipa: "/prɪˈfɜːr/", zh: "更喜欢", ex: "I prefer reading to TV.", band: "5.5" },
+          { en: "suggest", ipa: "/səˈdʒest/", zh: "建议；表明", ex: "Experts suggest more rest.", band: "5.5" }
+        ]
+      },
+      {
+        id: "u4", title: "Unit 4 · Band 6 学术入门", band: "Band 6",
+        words: [
+          { en: "analyse", ipa: "/ˈænəlaɪz/", zh: "分析", ex: "Analyse the data carefully.", band: "6" },
+          { en: "assume", ipa: "/əˈsuːm/", zh: "假设；认为", ex: "Don't assume the answer.", band: "6" },
+          { en: "available", ipa: "/əˈveɪləbl/", zh: "可获得的", ex: "More courses are available.", band: "6" },
+          { en: "conclude", ipa: "/kənˈkluːd/", zh: "得出结论", ex: "We can conclude that...", band: "6" },
+          { en: "contribute", ipa: "/kənˈtrɪbjuːt/", zh: "促成；贡献", ex: "Diet contributes to health.", band: "6" },
+          { en: "evidence", ipa: "/ˈevɪdəns/", zh: "证据", ex: "There is strong evidence.", band: "6" },
+          { en: "factor", ipa: "/ˈfæktər/", zh: "因素", ex: "Cost is an important factor.", band: "6" },
+          { en: "indicate", ipa: "/ˈɪndɪkeɪt/", zh: "表明；指示", ex: "Figures indicate growth.", band: "6" },
+          { en: "method", ipa: "/ˈmeθəd/", zh: "方法", ex: "This method works well.", band: "6" },
+          { en: "significant", ipa: "/sɪɡˈnɪfɪkənt/", zh: "显著的；重要的", ex: "A significant change.", band: "6" }
+        ]
+      },
+      {
+        id: "u5", title: "Unit 5 · Band 6.5 学术核心", band: "Band 6.5",
+        words: [
+          { en: "assess", ipa: "/əˈses/", zh: "评估", ex: "Teachers assess students.", band: "6.5" },
+          { en: "concept", ipa: "/ˈkɑːnsept/", zh: "概念", ex: "This is a key concept.", band: "6.5" },
+          { en: "context", ipa: "/ˈkɑːntekst/", zh: "背景；语境", ex: "Read words in context.", band: "6.5" },
+          { en: "emphasise", ipa: "/ˈemfəsaɪz/", zh: "强调", ex: "The essay emphasises safety.", band: "6.5" },
+          { en: "establish", ipa: "/ɪˈstæblɪʃ/", zh: "建立；确立", ex: "Establish a clear plan.", band: "6.5" },
+          { en: "evaluate", ipa: "/ɪˈvæljueɪt/", zh: "评价；评估", ex: "Evaluate the results.", band: "6.5" },
+          { en: "impact", ipa: "/ˈɪmpækt/", zh: "影响；冲击", ex: "Technology has a huge impact.", band: "6.5" },
+          { en: "process", ipa: "/ˈprɑːses/", zh: "过程；处理", ex: "Describe the process.", band: "6.5" },
+          { en: "research", ipa: "/rɪˈsɜːrtʃ/", zh: "研究", ex: "Recent research shows...", band: "6.5" },
+          { en: "theory", ipa: "/ˈθɪri/", zh: "理论", ex: "This theory explains the data.", band: "6.5" }
+        ]
+      },
+      {
+        id: "u6", title: "Unit 6 · Band 7 写作高频", band: "Band 7",
+        words: [
+          { en: "consequence", ipa: "/ˈkɑːnsɪkwəns/", zh: "后果；结果", ex: "Pollution has serious consequences.", band: "7" },
+          { en: "contemporary", ipa: "/kənˈtempəreri/", zh: "当代的", ex: "Contemporary society faces stress.", band: "7" },
+          { en: "crucial", ipa: "/ˈkruːʃl/", zh: "至关重要的", ex: "Education is crucial.", band: "7" },
+          { en: "decline", ipa: "/dɪˈklaɪn/", zh: "下降；拒绝", ex: "Birth rates are in decline.", band: "7" },
+          { en: "diverse", ipa: "/daɪˈvɜːrs/", zh: "多样的", ex: "A diverse range of views.", band: "7" },
+          { en: "inevitable", ipa: "/ɪnˈevɪtəbl/", zh: "不可避免的", ex: "Change is inevitable.", band: "7" },
+          { en: "maintain", ipa: "/meɪnˈteɪn/", zh: "维持；主张", ex: "Maintain a healthy lifestyle.", band: "7" },
+          { en: "perspective", ipa: "/pərˈspektɪv/", zh: "视角；观点", ex: "From a global perspective.", band: "7" },
+          { en: "relevant", ipa: "/ˈreləvənt/", zh: "相关的", ex: "Give relevant examples.", band: "7" },
+          { en: "trend", ipa: "/trend/", zh: "趋势", ex: "This is a long-term trend.", band: "7" }
+        ]
+      },
+      {
+        id: "u7", title: "Unit 7 · Band 7.5 进阶学术", band: "Band 7.5",
+        words: [
+          { en: "allocate", ipa: "/ˈæləkeɪt/", zh: "分配", ex: "Allocate resources wisely.", band: "7.5" },
+          { en: "compensate", ipa: "/ˈkɑːmpenseɪt/", zh: "补偿；弥补", ex: "Nothing can compensate for lost time.", band: "7.5" },
+          { en: "constitute", ipa: "/ˈkɑːnstɪtuːt/", zh: "构成；组成", ex: "These factors constitute risk.", band: "7.5" },
+          { en: "diminish", ipa: "/dɪˈmɪnɪʃ/", zh: "减少；削弱", ex: "Trust may diminish over time.", band: "7.5" },
+          { en: "fluctuate", ipa: "/ˈflʌktʃueɪt/", zh: "波动", ex: "Prices fluctuate monthly.", band: "7.5" },
+          { en: "impose", ipa: "/ɪmˈpoʊz/", zh: "强加；征收", ex: "Governments impose taxes.", band: "7.5" },
+          { en: "integrate", ipa: "/ˈɪntɪɡreɪt/", zh: "整合；融入", ex: "Integrate skills into study.", band: "7.5" },
+          { en: "predominant", ipa: "/prɪˈdɑːmɪnənt/", zh: "占主导的", ex: "English is predominant online.", band: "7.5" },
+          { en: "stimulate", ipa: "/ˈstɪmjuleɪt/", zh: "刺激；促进", ex: "Questions stimulate thinking.", band: "7.5" },
+          { en: "undermine", ipa: "/ˌʌndərˈmaɪn/", zh: "削弱；损害", ex: "Fake news undermines trust.", band: "7.5" }
+        ]
+      },
+      {
+        id: "u8", title: "Unit 8 · Band 8+ 高阶精选", band: "Band 8+",
+        words: [
+          { en: "alleviate", ipa: "/əˈliːvieɪt/", zh: "减轻；缓解", ex: "Policies can alleviate poverty.", band: "8+" },
+          { en: "ambiguous", ipa: "/æmˈbɪɡjuəs/", zh: "模棱两可的", ex: "The statement is ambiguous.", band: "8+" },
+          { en: "coherent", ipa: "/koʊˈhɪrənt/", zh: "连贯的；一致的", ex: "Write a coherent argument.", band: "8+" },
+          { en: "compel", ipa: "/kəmˈpel/", zh: "迫使", ex: "Evidence compelled a review.", band: "8+" },
+          { en: "discrepancy", ipa: "/dɪˈskrepənsi/", zh: "差异；不符", ex: "There is a discrepancy in data.", band: "8+" },
+          { en: "exacerbate", ipa: "/ɪɡˈzæsərbeɪt/", zh: "加剧；恶化", ex: "Traffic exacerbates pollution.", band: "8+" },
+          { en: "plausible", ipa: "/ˈplɔːzəbl/", zh: "貌似合理的", ex: "A plausible explanation.", band: "8+" },
+          { en: "proponent", ipa: "/prəˈpoʊnənt/", zh: "支持者；提倡者", ex: "Proponents of online learning.", band: "8+" },
+          { en: "scrutinise", ipa: "/ˈskruːtənaɪz/", zh: "仔细检查", ex: "Scrutinise the evidence.", band: "8+" },
+          { en: "unprecedented", ipa: "/ʌnˈpresɪdentɪd/", zh: "史无前例的", ex: "An unprecedented challenge.", band: "8+" }
+        ]
+      }
+    ];
+
+    const ALL_WORDS = UNITS.flatMap((u) => u.words.map((w) => ({ ...w, unitId: u.id, unitTitle: u.title })));
+
+    let state = loadState();
+    let queue = [], index = 0, known = 0, unknown = [], flipped = false, mode = "daily";
+
+    const els = {
+      card: document.getElementById("card"),
+      study: document.getElementById("study"),
+      done: document.getElementById("done"),
+      progress: document.getElementById("progress"),
+      tabs: document.getElementById("tabs")
+    };
+
+    function todayKey() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+    }
+    function formatDateCn(key) {
+      const [y,m,d] = key.split("-");
+      const week = "日一二三四五六"[new Date(`${key}T12:00:00`).getDay()];
+      return `${y}年${Number(m)}月${Number(d)}日 周${week}`;
+    }
+    function loadState() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { wrongBook:{}, checkins:{}, streak:0 }; }
+      catch { return { wrongBook:{}, checkins:{}, streak:0 }; }
+    }
+    function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    function hashSeed(str) {
+      let h = 2166136261;
+      for (let i=0;i<str.length;i++){ h ^= str.charCodeAt(i); h = Math.imul(h,16777619); }
+      return h >>> 0;
+    }
+    function seededShuffle(arr, seed) {
+      const a = arr.slice(); let s = seed;
+      for (let i=a.length-1;i>0;i--){ s=(Math.imul(s,1664525)+1013904223)>>>0; const j=s%(i+1); [a[i],a[j]]=[a[j],a[i]]; }
+      return a;
+    }
+    // Daily mix: slightly prefer earlier (easier) units, but include some harder ones
+    function dailyWords(date) {
+      const weighted = [];
+      UNITS.forEach((u, ui) => {
+        const weight = Math.max(1, UNITS.length - ui);
+        u.words.forEach((w) => { for (let i=0;i<weight;i++) weighted.push({ ...w, unitId:u.id, unitTitle:u.title }); });
+      });
+      const picked = [];
+      const seen = new Set();
+      for (const w of seededShuffle(weighted, hashSeed(date + "-ielts"))) {
+        if (seen.has(w.en)) continue;
+        seen.add(w.en);
+        picked.push(w);
+        if (picked.length >= DAILY) break;
+      }
+      return picked;
+    }
+    function yesterdayKey(key) {
+      const d = new Date(`${key}T12:00:00`); d.setDate(d.getDate()-1);
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+    }
+    function wrongList() {
+      if (!state.wrongBook) state.wrongBook = {};
+      return Object.values(state.wrongBook).sort((a,b)=>(b.misses||0)-(a.misses||0));
+    }
+    function addWrong(word) {
+      if (!state.wrongBook) state.wrongBook = {};
+      const prev = state.wrongBook[word.en];
+      state.wrongBook[word.en] = { ...word, misses:(prev?.misses||0)+1, lastMiss: todayKey() };
+      saveState();
+    }
+    function removeWrong(en) {
+      if (!state.wrongBook) return;
+      delete state.wrongBook[en];
+      saveState();
+    }
+    function updateStreakUI(date) {
+      const checked = !!(state.checkins && state.checkins[date]);
+      document.getElementById("streakCount").textContent = state.streak || 0;
+      document.getElementById("checkStatus").textContent = checked ? "今日已打卡" : "今日未打卡";
+      document.getElementById("checkStatus").style.color = checked ? "#4ade80" : "";
+    }
+    function markCheckin(date) {
+      if (!state.checkins) state.checkins = {};
+      if (!state.checkins[date]) {
+        state.checkins[date] = { at:new Date().toISOString(), known, unknown: unknown.length };
+        state.streak = state.lastCheckin === yesterdayKey(date) ? (state.streak||0)+1 : 1;
+        state.lastCheckin = date;
+        saveState();
+      }
+      updateStreakUI(date);
+    }
+    function showTab(name) {
+      ["home","units","wrong","study","done"].forEach(id => document.getElementById(id).style.display = "none");
+      document.querySelectorAll(".tabs button").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
+      if (name === "home") renderHome();
+      if (name === "units") renderUnits();
+      if (name === "wrong") renderWrong();
+      document.getElementById(name).style.display = "flex";
+      if (name !== "study") els.progress.textContent = "—";
+    }
+    function renderHome() {
+      const date = todayKey();
+      document.getElementById("dateLabel").textContent = formatDateCn(date);
+      updateStreakUI(date);
+      const checked = !!(state.checkins && state.checkins[date]);
+      const wrongN = wrongList().length;
+      document.getElementById("homeTitle").textContent = checked ? "今日已打卡" : "今日 10 词";
+      document.getElementById("homeDesc").textContent = checked
+        ? `已完成。词库 ${ALL_WORDS.length} 词，8 个单元按 Band 4→8+ 排序；错题本 ${wrongN} 个。`
+        : `每日 10 词（偏易混难）。单元页按雅思难度从易到难，建议顺序学。`;
+      document.getElementById("startBtn").textContent = checked ? "再练今日词表" : "开始今日学习";
+      document.getElementById("reviewWrongBtn").style.display = wrongN ? "block" : "none";
+    }
+    function renderUnits() {
+      document.getElementById("totalWords").textContent = ALL_WORDS.length;
+      const list = document.getElementById("unitList");
+      list.innerHTML = "";
+      UNITS.forEach((u) => {
+        const btn = document.createElement("button");
+        btn.type = "button"; btn.className = "unit";
+        btn.innerHTML = `<div><div>${u.title}</div><div class="meta">${u.words.length} 词 · 建议按顺序</div><span class="pill">${u.band}</span></div><span class="go">学习</span>`;
+        btn.addEventListener("click", () => start(u.words.map(w => ({...w, unitId:u.id, unitTitle:u.title})), "unit", u.title));
+        list.appendChild(btn);
+      });
+    }
+    function renderWrong() {
+      const items = wrongList();
+      document.getElementById("wrongDesc").textContent = items.length
+        ? `共 ${items.length} 个错词，按错过次数排序。`
+        : "暂无错词。学习时点「不认识」就会进来。";
+      document.getElementById("practiceWrongBtn").disabled = !items.length;
+      const list = document.getElementById("wrongList");
+      list.innerHTML = "";
+      if (!items.length) { list.innerHTML = `<div class="empty">错题本是空的</div>`; return; }
+      items.forEach((w) => {
+        const row = document.createElement("div");
+        row.className = "wrong-item";
+        row.innerHTML = `<div><div class="en">${w.en}</div><div class="zh">${w.zh}${w.band ? " · Band "+w.band : ""}</div></div><div class="count">错 ${w.misses||1} 次</div>`;
+        list.appendChild(row);
+      });
+    }
+    function start(list, nextMode, title) {
+      mode = nextMode; queue = list.slice(); index = 0; known = 0; unknown = []; flipped = false;
+      els.card.classList.remove("flipped");
+      ["home","units","wrong","done"].forEach(id => document.getElementById(id).style.display = "none");
+      document.querySelectorAll(".tabs button").forEach(b => b.classList.remove("active"));
+      els.study.style.display = "flex";
+      document.getElementById("doneTitle").dataset.from = title || "";
+      showCard();
+    }
+    function showCard() {
+      if (index >= queue.length) {
+        els.study.style.display = "none"; els.done.style.display = "flex";
+        const date = todayKey();
+        if (mode === "daily") markCheckin(date);
+        document.getElementById("doneBadge").textContent =
+          mode === "daily" ? "打卡成功 · " + formatDateCn(date) :
+          mode === "wrong" ? "错题练习结束" : "单元完成";
+        document.getElementById("doneTitle").textContent =
+          mode === "unit" && document.getElementById("doneTitle").dataset.from
+            ? document.getElementById("doneTitle").dataset.from : "本轮结束";
+        document.getElementById("summary").textContent =
+          `认识 ${known} 个，不认识 ${unknown.length} 个。错题本现有 ${wrongList().length} 个词。`;
+        document.getElementById("restart").style.display = unknown.length || wrongList().length ? "block" : "none";
+        els.progress.textContent = "—";
+        return;
+      }
+      const w = queue[index];
+      document.getElementById("word").textContent = w.en;
+      document.getElementById("phonetic").textContent = w.ipa;
+      document.getElementById("meaning").textContent = w.zh;
+      document.getElementById("example").textContent = w.ex;
+      const bandText = w.band ? `IELTS ≈ Band ${w.band}` : "";
+      document.getElementById("bandFront").textContent = bandText;
+      document.getElementById("bandBack").textContent = bandText;
+      els.progress.textContent = `${index+1} / ${queue.length}`;
+      flipped = false; els.card.classList.remove("flipped");
+    }
+    function flip() {
+      if (index >= queue.length) return;
+      flipped = !flipped; els.card.classList.toggle("flipped", flipped);
+    }
+    function mark(isKnown) {
+      if (index >= queue.length) return;
+      const w = queue[index];
+      if (isKnown) { known += 1; removeWrong(w.en); }
+      else { unknown.push(w); addWrong(w); }
+      index += 1; showCard();
+    }
+
+    window.__flip = flip;
+    let markLock = false;
+    function safeMark(isKnown) {
+      if (markLock) return;
+      markLock = true;
+      try { mark(isKnown); } finally { setTimeout(() => { markLock = false; }, 180); }
+    }
+    window.__mark = safeMark;
+    els.card.addEventListener("click", (e) => { e.preventDefault(); flip(); });
+    document.addEventListener("click", (e) => {
+      const btn = e.target && e.target.closest ? e.target.closest("[data-action]") : null;
+      if (!btn) return;
+      const act = btn.getAttribute("data-action");
+      if (act === "know") { e.preventDefault(); safeMark(true); }
+      if (act === "again") { e.preventDefault(); safeMark(false); }
+    }, true);
+    document.getElementById("startBtn").addEventListener("click", () => start(dailyWords(todayKey()), "daily"));
+    document.getElementById("reviewWrongBtn").addEventListener("click", () => start(wrongList(), "wrong"));
+    document.getElementById("practiceWrongBtn").addEventListener("click", () => start(wrongList(), "wrong"));
+    document.getElementById("clearWrongBtn").addEventListener("click", () => {
+      if (!wrongList().length) return;
+      if (confirm("确定清空错题本？")) { state.wrongBook = {}; saveState(); renderWrong(); }
+    });
+    document.getElementById("restart").addEventListener("click", () => {
+      const list = unknown.length ? unknown : wrongList();
+      if (list.length) start(list, "wrong"); else showTab("home");
+    });
+    document.getElementById("backHome").addEventListener("click", () => showTab("home"));
+    els.tabs.addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-tab]");
+      if (!btn) return;
+      showTab(btn.dataset.tab);
+    });
+
+    document.getElementById("dateLabel").textContent = formatDateCn(todayKey());
+    showTab("home");
+  </script>
+</body>
+</html>
