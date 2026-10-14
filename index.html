@@ -143,7 +143,7 @@
     .stat.warn .n { color: #fbbf24; }
     .tabs {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
       gap: 4px;
       padding: 4px;
       background: rgba(15, 23, 42, 0.65);
@@ -158,10 +158,11 @@
       border-radius: 11px;
       padding: 10px 8px;
       min-height: 42px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 650;
       cursor: pointer;
       transition: background .2s ease, color .2s ease, transform .12s ease;
+      padding: 10px 4px;
     }
     .tabs button.active {
       color: #0b1220;
@@ -259,6 +260,7 @@
       inset: 0;
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
+      overflow: hidden;
       border-radius: 22px;
       background:
         linear-gradient(165deg, rgba(51,65,85,0.55), transparent 40%),
@@ -272,7 +274,7 @@
       padding: 28px 22px;
       text-align: center;
     }
-    .face.back { transform: rotateY(180deg); }
+    .face.back { transform: rotateY(180deg); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
     .word {
       font-size: clamp(32px, 8vw, 48px);
       font-weight: 780;
@@ -558,6 +560,96 @@
     .auto-speak-row input:checked::after {
       transform: translateX(18px);
     }
+    
+    .speak-btn {
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      transform: translateZ(1px);
+      -webkit-transform: translateZ(1px);
+    }
+    .card:not(.flipped) .face.back .speak-btn,
+    .card.flipped .face.front .speak-btn {
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+    .unit-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .unit-actions .go { min-width: 52px; justify-content: center; }
+    .spell-card {
+      width: 100%;
+      background:
+        linear-gradient(165deg, rgba(51,65,85,0.55), transparent 40%),
+        var(--card-solid);
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 22px;
+      box-shadow: var(--shadow), 0 0 40px var(--glow);
+      padding: 22px 18px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+      text-align: center;
+    }
+    .spell-card .spell-zh {
+      font-size: clamp(24px, 6vw, 34px);
+      font-weight: 750;
+      line-height: 1.35;
+    }
+    .spell-card .speak-btn { align-self: center; margin-top: 0; }
+    #spellInput {
+      width: 100%;
+      min-height: 56px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: rgba(15, 23, 42, 0.75);
+      color: var(--text);
+      font-size: 22px;
+      font-weight: 650;
+      text-align: center;
+      padding: 12px 14px;
+      outline: none;
+      letter-spacing: 0.02em;
+      -webkit-appearance: none;
+    }
+    #spellInput:focus {
+      border-color: rgba(56, 189, 248, 0.55);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.18);
+    }
+    #spellInput.ok {
+      border-color: rgba(34, 197, 94, 0.55);
+      background: rgba(34, 197, 94, 0.12);
+    }
+    #spellInput.bad {
+      border-color: rgba(244, 63, 94, 0.55);
+      background: rgba(244, 63, 94, 0.1);
+    }
+    .spell-feedback {
+      min-height: 24px;
+      font-size: 14px;
+      font-weight: 650;
+      color: var(--muted);
+    }
+    .spell-feedback.ok { color: #4ade80; }
+    .spell-feedback.bad { color: #fda4af; }
+    .spell-feedback .answer {
+      display: block;
+      margin-top: 4px;
+      font-size: 20px;
+      font-weight: 780;
+      color: var(--text);
+      letter-spacing: 0.02em;
+    }
+    #spellCheckBtn, #spellNextBtn {
+      min-height: 54px;
+      font-size: 16px;
+      border-radius: 16px;
+    }
+
     .tts-hidden { display: none !important; }
   </style>
 </head>
@@ -594,6 +686,7 @@
     <div class="tabs" id="tabs">
       <button type="button" data-tab="home" class="active">今日</button>
       <button type="button" data-tab="units">单元</button>
+      <button type="button" data-tab="spell">拼写</button>
       <button type="button" data-tab="wrong">错题本</button>
     </div>
 
@@ -604,6 +697,7 @@
       </div>
       <div class="home-actions">
         <button class="primary" id="startBtn" type="button">开始今日学习</button>
+        <button class="secondary" id="startSpellBtn" type="button">开始拼写</button>
         <button class="secondary" id="reviewWrongBtn" type="button">先刷错题本</button>
         <label class="auto-speak-row" id="autoSpeakRow">
           <span>🎧 自动朗读</span>
@@ -623,9 +717,38 @@
       <p id="wrongDesc">标记为「不认识」的词会进入这里。</p>
       <div class="row-btns">
         <button class="primary" id="practiceWrongBtn" type="button">练习错题</button>
-        <button class="secondary" id="clearWrongBtn" type="button">清空错题本</button>
+        <button class="secondary" id="spellWrongBtn" type="button">拼写错题</button>
       </div>
+      <button class="secondary" id="clearWrongBtn" type="button">清空错题本</button>
       <div class="unit-list" id="wrongList"></div>
+    </div>
+
+
+    <div id="spell" class="panel">
+      <div class="home-hero">
+        <h2>拼写练习</h2>
+        <p class="lead">看中文写英文。可点听读听发音，不直接显示拼写。</p>
+      </div>
+      <div class="home-actions">
+        <button class="primary" id="spellDailyBtn" type="button">开始今日拼写</button>
+        <button class="secondary" id="spellWrongHubBtn" type="button">拼写错题</button>
+      </div>
+      <p style="margin:0;color:var(--muted);font-size:14px">或按单元练习：</p>
+      <div class="unit-list" id="spellUnitList"></div>
+    </div>
+
+    <div id="spellPractice" class="panel">
+      <div class="spell-card">
+        <div class="spell-zh" id="spellZh"></div>
+        <div class="meta-row" style="justify-content:center">
+          <span class="chip band" id="spellBand"></span>
+        </div>
+        <button type="button" class="speak-btn" id="btnSpellListen" aria-label="听读单词">🎧 听读</button>
+        <input id="spellInput" type="text" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="输入英文单词" aria-label="拼写输入" />
+        <div class="spell-feedback" id="spellFeedback"></div>
+        <button class="primary" id="spellCheckBtn" type="button">检查</button>
+        <button class="secondary" id="spellNextBtn" type="button" style="display:none">下一词</button>
+      </div>
     </div>
 
     <div id="study" class="panel">
@@ -801,7 +924,8 @@
     const ALL_WORDS = UNITS.flatMap((u) => u.words.map((w) => ({ ...w, unitId: u.id, unitTitle: u.title })));
 
     let state = loadState();
-    let queue = [], index = 0, known = 0, unknown = [], flipped = false, mode = "daily";
+    let queue = [], index = 0, known = 0, unknown = [], flipped = false, mode = "daily", activity = "flash";
+    let spellRevealed = false;
 
     const els = {
       card: document.getElementById("card"),
@@ -945,10 +1069,12 @@
       const row = document.getElementById("autoSpeakRow");
       const wordBtn = document.getElementById("btnSpeakWord");
       const exBtn = document.getElementById("btnSpeakEx");
+      const spellListen = document.getElementById("btnSpellListen");
       if (!TTS_OK) {
         if (row) row.classList.add("tts-hidden");
         if (wordBtn) wordBtn.classList.add("tts-hidden");
         if (exBtn) exBtn.classList.add("tts-hidden");
+        if (spellListen) spellListen.classList.add("tts-hidden");
         return;
       }
       refreshVoices();
@@ -981,6 +1107,14 @@
           if (w && w.ex) speakText(w.ex, exBtn);
         });
       }
+      if (spellListen) {
+        spellListen.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const w = queue[index];
+          if (activity === "spell" && w) speakText(w.en, spellListen);
+        });
+      }
     }
 
     function updateStreakUI(date) {
@@ -1005,15 +1139,21 @@
     }
     function showTab(name) {
       if (TTS_OK) { try { speechSynthesis.cancel(); } catch (_) {} clearSpeakingUI(); }
-      ["home","units","wrong","study","done"].forEach(id => document.getElementById(id).style.display = "none");
+      ["home","units","spell","wrong","study","spellPractice","done"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = "none";
+      });
       document.querySelectorAll(".tabs button").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
-      els.statsRow.style.display = (name === "study" || name === "done") ? "none" : "grid";
+      const hideStats = (name === "study" || name === "done" || name === "spellPractice");
+      els.statsRow.style.display = hideStats ? "none" : "grid";
       setProgressBar(false, 0);
       if (name === "home") renderHome();
       if (name === "units") renderUnits();
+      if (name === "spell") renderSpellHub();
       if (name === "wrong") renderWrong();
-      document.getElementById(name).style.display = "flex";
-      if (name !== "study") els.progress.textContent = "—";
+      const panel = document.getElementById(name);
+      if (panel) panel.style.display = "flex";
+      if (name !== "study" && name !== "spellPractice") els.progress.textContent = "—";
     }
     function renderHome() {
       const date = todayKey();
@@ -1028,17 +1168,39 @@
       document.getElementById("startBtn").textContent = checked ? "再练今日词表" : "开始今日学习";
       document.getElementById("reviewWrongBtn").style.display = wrongN ? "block" : "none";
     }
+    function unitWords(u) {
+      return u.words.map(w => ({...w, unitId:u.id, unitTitle:u.title}));
+    }
+    function renderUnitRow(u, listEl, flashOnly) {
+      const btn = document.createElement("button");
+      btn.type = "button"; btn.className = "unit";
+      const actions = flashOnly
+        ? `<span class="go" data-act="spell">拼写</span>`
+        : `<div class="unit-actions"><span class="go" data-act="flash">闪卡</span><span class="go" data-act="spell">拼写</span></div>`;
+      btn.innerHTML = `<div><div>${u.title}</div><div class="meta">${u.words.length} 词 · 建议按顺序</div><span class="pill">${u.band}</span></div>${actions}`;
+      btn.addEventListener("click", (e) => {
+        const actEl = e.target && e.target.closest ? e.target.closest("[data-act]") : null;
+        const act = actEl ? actEl.getAttribute("data-act") : (flashOnly ? "spell" : "flash");
+        const words = unitWords(u);
+        if (act === "spell") startSpell(words, "unit", u.title);
+        else start(words, "unit", u.title);
+      });
+      listEl.appendChild(btn);
+    }
     function renderUnits() {
       document.getElementById("totalWords").textContent = ALL_WORDS.length;
       const list = document.getElementById("unitList");
       list.innerHTML = "";
-      UNITS.forEach((u) => {
-        const btn = document.createElement("button");
-        btn.type = "button"; btn.className = "unit";
-        btn.innerHTML = `<div><div>${u.title}</div><div class="meta">${u.words.length} 词 · 建议按顺序</div><span class="pill">${u.band}</span></div><span class="go">学习</span>`;
-        btn.addEventListener("click", () => start(u.words.map(w => ({...w, unitId:u.id, unitTitle:u.title})), "unit", u.title));
-        list.appendChild(btn);
-      });
+      UNITS.forEach((u) => renderUnitRow(u, list, false));
+    }
+    function renderSpellHub() {
+      const wrongN = wrongList().length;
+      const hubWrong = document.getElementById("spellWrongHubBtn");
+      if (hubWrong) hubWrong.style.display = wrongN ? "block" : "none";
+      const list = document.getElementById("spellUnitList");
+      if (!list) return;
+      list.innerHTML = "";
+      UNITS.forEach((u) => renderUnitRow(u, list, true));
     }
     function renderWrong() {
       const items = wrongList();
@@ -1046,6 +1208,8 @@
         ? `共 ${items.length} 个错词，按错过次数排序。`
         : "暂无错词。学习时点「不认识」就会进来。";
       document.getElementById("practiceWrongBtn").disabled = !items.length;
+      const sw = document.getElementById("spellWrongBtn");
+      if (sw) sw.disabled = !items.length;
       const list = document.getElementById("wrongList");
       list.innerHTML = "";
       if (!items.length) { list.innerHTML = `<div class="empty">错题本是空的</div>`; return; }
@@ -1057,15 +1221,123 @@
         list.appendChild(row);
       });
     }
-    function start(list, nextMode, title) {
-      mode = nextMode; queue = list.slice(); index = 0; known = 0; unknown = []; flipped = false;
-      els.card.classList.remove("flipped");
-      ["home","units","wrong","done"].forEach(id => document.getElementById(id).style.display = "none");
+    function hideBrowsePanels() {
+      ["home","units","spell","wrong","done","spellPractice","study"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = "none";
+      });
       document.querySelectorAll(".tabs button").forEach(b => b.classList.remove("active"));
       els.statsRow.style.display = "none";
+    }
+    function start(list, nextMode, title) {
+      activity = "flash";
+      mode = nextMode; queue = list.slice(); index = 0; known = 0; unknown = []; flipped = false;
+      els.card.classList.remove("flipped");
+      hideBrowsePanels();
       els.study.style.display = "flex";
       document.getElementById("doneTitle").dataset.from = title || "";
       showCard();
+    }
+    function normalizeSpell(s) {
+      return String(s || "").trim().toLowerCase().replace(/\s+/g, " ");
+    }
+    function startSpell(list, nextMode, title) {
+      if (!list || !list.length) return;
+      activity = "spell";
+      mode = nextMode; queue = list.slice(); index = 0; known = 0; unknown = [];
+      spellRevealed = false;
+      hideBrowsePanels();
+      document.getElementById("spellPractice").style.display = "flex";
+      document.getElementById("doneTitle").dataset.from = title || "";
+      showSpellCard();
+    }
+    function resetSpellForm() {
+      const input = document.getElementById("spellInput");
+      const fb = document.getElementById("spellFeedback");
+      const checkBtn = document.getElementById("spellCheckBtn");
+      const nextBtn = document.getElementById("spellNextBtn");
+      input.value = "";
+      input.classList.remove("ok", "bad");
+      input.disabled = false;
+      fb.className = "spell-feedback";
+      fb.innerHTML = "";
+      checkBtn.style.display = "block";
+      nextBtn.style.display = "none";
+      spellRevealed = false;
+    }
+    function showSpellCard() {
+      if (index >= queue.length) {
+        document.getElementById("spellPractice").style.display = "none";
+        els.done.style.display = "flex";
+        setProgressBar(false, 0);
+        const date = todayKey();
+        document.getElementById("doneBadge").textContent =
+          mode === "daily" ? "今日拼写完成 · " + formatDateCn(date) :
+          mode === "wrong" ? "错题拼写结束" : "单元拼写完成";
+        document.getElementById("doneTitle").textContent =
+          mode === "unit" && document.getElementById("doneTitle").dataset.from
+            ? document.getElementById("doneTitle").dataset.from : "拼写结束";
+        document.getElementById("summary").textContent =
+          `拼对 ${known} 个，拼错 ${unknown.length} 个。错题本现有 ${wrongList().length} 个词。`;
+        document.getElementById("restart").style.display = unknown.length || wrongList().length ? "block" : "none";
+        document.getElementById("restart").textContent = "继续拼写错题";
+        els.progress.textContent = "—";
+        return;
+      }
+      const w = queue[index];
+      document.getElementById("spellZh").textContent = w.zh;
+      const bandText = w.band ? `Band ${w.band}` : "";
+      const bandEl = document.getElementById("spellBand");
+      bandEl.textContent = bandText;
+      bandEl.style.display = bandText ? "" : "none";
+      els.progress.textContent = `${index+1} / ${queue.length}`;
+      setProgressBar(true, index / queue.length);
+      resetSpellForm();
+      clearSpeakingUI();
+      setTimeout(() => {
+        const input = document.getElementById("spellInput");
+        if (input && activity === "spell") input.focus();
+      }, 80);
+    }
+    function finishSpellAdvance() {
+      index += 1;
+      setProgressBar(true, Math.min(1, index / queue.length));
+      showSpellCard();
+    }
+    function checkSpell() {
+      if (activity !== "spell" || index >= queue.length || spellRevealed) return;
+      const w = queue[index];
+      const input = document.getElementById("spellInput");
+      const fb = document.getElementById("spellFeedback");
+      const ans = normalizeSpell(input.value);
+      if (!ans) {
+        fb.className = "spell-feedback bad";
+        fb.textContent = "请先输入拼写";
+        input.focus();
+        return;
+      }
+      const ok = ans === normalizeSpell(w.en);
+      if (ok) {
+        known += 1;
+        removeWrong(w.en);
+        input.classList.add("ok");
+        input.disabled = true;
+        fb.className = "spell-feedback ok";
+        fb.textContent = "拼写正确 ✓";
+        document.getElementById("spellCheckBtn").style.display = "none";
+        setTimeout(() => finishSpellAdvance(), 650);
+      } else {
+        unknown.push(w);
+        addWrong(w);
+        spellRevealed = true;
+        input.classList.add("bad");
+        input.disabled = true;
+        fb.className = "spell-feedback bad";
+        fb.innerHTML = `不正确<span class="answer">${w.en}</span>`;
+        document.getElementById("spellCheckBtn").style.display = "none";
+        document.getElementById("spellNextBtn").style.display = "block";
+        updateStreakUI(todayKey());
+      }
     }
     function showCard() {
       if (index >= queue.length) {
@@ -1073,7 +1345,7 @@
         setProgressBar(false, 0);
         setMarkLocked(true);
         const date = todayKey();
-        if (mode === "daily") markCheckin(date);
+        if (mode === "daily" && activity === "flash") markCheckin(date);
         document.getElementById("doneBadge").textContent =
           mode === "daily" ? "打卡成功 · " + formatDateCn(date) :
           mode === "wrong" ? "错题练习结束" : "单元完成";
@@ -1083,6 +1355,7 @@
         document.getElementById("summary").textContent =
           `认识 ${known} 个，不认识 ${unknown.length} 个。错题本现有 ${wrongList().length} 个词。`;
         document.getElementById("restart").style.display = unknown.length || wrongList().length ? "block" : "none";
+        document.getElementById("restart").textContent = "继续练错题";
         els.progress.textContent = "—";
         return;
       }
@@ -1142,15 +1415,30 @@
       if (act === "again") { e.preventDefault(); safeMark(false); }
     }, true);
     document.getElementById("startBtn").addEventListener("click", () => start(dailyWords(todayKey()), "daily"));
+    document.getElementById("startSpellBtn").addEventListener("click", () => startSpell(dailyWords(todayKey()), "daily"));
     document.getElementById("reviewWrongBtn").addEventListener("click", () => start(wrongList(), "wrong"));
     document.getElementById("practiceWrongBtn").addEventListener("click", () => start(wrongList(), "wrong"));
+    document.getElementById("spellWrongBtn").addEventListener("click", () => startSpell(wrongList(), "wrong"));
+    document.getElementById("spellDailyBtn").addEventListener("click", () => startSpell(dailyWords(todayKey()), "daily"));
+    document.getElementById("spellWrongHubBtn").addEventListener("click", () => startSpell(wrongList(), "wrong"));
+    document.getElementById("spellCheckBtn").addEventListener("click", () => checkSpell());
+    document.getElementById("spellNextBtn").addEventListener("click", () => finishSpellAdvance());
+    document.getElementById("spellInput").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        if (spellRevealed) finishSpellAdvance();
+        else checkSpell();
+      }
+    });
     document.getElementById("clearWrongBtn").addEventListener("click", () => {
       if (!wrongList().length) return;
-      if (confirm("确定清空错题本？")) { state.wrongBook = {}; saveState(); renderWrong(); updateStreakUI(todayKey()); }
+      if (confirm("确定清空错题本？")) { state.wrongBook = {}; saveState(); renderWrong(); renderSpellHub(); updateStreakUI(todayKey()); }
     });
     document.getElementById("restart").addEventListener("click", () => {
       const list = unknown.length ? unknown : wrongList();
-      if (list.length) start(list, "wrong"); else showTab("home");
+      if (!list.length) { showTab("home"); return; }
+      if (activity === "spell") startSpell(list, "wrong");
+      else start(list, "wrong");
     });
     document.getElementById("backHome").addEventListener("click", () => showTab("home"));
     els.tabs.addEventListener("click", (e) => {
