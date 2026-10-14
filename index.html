@@ -480,6 +480,86 @@
       body { padding-top: 24px; padding-bottom: 24px; }
       .card { height: 300px; }
     }
+
+    .speak-btn {
+      margin-top: 16px;
+      min-height: 40px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      background: var(--accent-soft);
+      border: 1px solid rgba(56, 189, 248, 0.32);
+      box-shadow: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 5;
+      position: relative;
+    }
+    .speak-btn-sm {
+      margin-top: 12px;
+      min-height: 36px;
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+    .speak-btn.speaking {
+      color: #0b1220;
+      background: linear-gradient(135deg, #7dd3fc, #a5b4fc);
+      border-color: transparent;
+      animation: speak-pulse 1s ease-in-out infinite;
+    }
+    @keyframes speak-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.45); }
+      50% { box-shadow: 0 0 0 8px rgba(56, 189, 248, 0); }
+    }
+    .auto-speak-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      background: rgba(15, 23, 42, 0.55);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 650;
+      color: var(--text);
+      cursor: pointer;
+      user-select: none;
+    }
+    .auto-speak-row input {
+      width: 44px;
+      height: 26px;
+      appearance: none;
+      border-radius: 999px;
+      background: rgba(100, 116, 139, 0.55);
+      border: 1px solid var(--line);
+      position: relative;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background .2s ease;
+    }
+    .auto-speak-row input::after {
+      content: "";
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      transition: transform .2s ease;
+    }
+    .auto-speak-row input:checked {
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      border-color: transparent;
+    }
+    .auto-speak-row input:checked::after {
+      transform: translateX(18px);
+    }
+    .tts-hidden { display: none !important; }
   </style>
 </head>
 <body>
@@ -526,6 +606,10 @@
       <div class="home-actions">
         <button class="primary" id="startBtn" type="button">开始今日学习</button>
         <button class="secondary" id="reviewWrongBtn" type="button">先刷错题本</button>
+        <label class="auto-speak-row" id="autoSpeakRow">
+          <span>🎧 自动朗读</span>
+          <input type="checkbox" id="autoSpeakToggle" checked />
+        </label>
       </div>
     </div>
 
@@ -554,6 +638,7 @@
               <span class="chip" id="phonetic"></span>
               <span class="chip band" id="bandFront"></span>
             </div>
+            <button type="button" class="speak-btn" id="btnSpeakWord" aria-label="听读单词">🎧 听读</button>
             <div class="hint">点卡片看释义</div>
           </div>
           <div class="face back">
@@ -562,6 +647,7 @@
             <div class="meta-row" style="margin-top:14px">
               <span class="chip band" id="bandBack"></span>
             </div>
+            <button type="button" class="speak-btn speak-btn-sm" id="btnSpeakEx" aria-label="读例句">🔊 读例句</button>
             <div class="hint">再点一次可翻回</div>
           </div>
         </div>
@@ -740,8 +826,15 @@
       return `${y}年${Number(m)}月${Number(d)}日 周${week}`;
     }
     function loadState() {
-      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { wrongBook:{}, checkins:{}, streak:0 }; }
-      catch { return { wrongBook:{}, checkins:{}, streak:0 }; }
+      const defaults = { wrongBook:{}, checkins:{}, streak:0, autoSpeak:true };
+      try {
+        const raw = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if (!raw || typeof raw !== "object") return defaults;
+        if (typeof raw.autoSpeak !== "boolean") raw.autoSpeak = true;
+        if (!raw.wrongBook) raw.wrongBook = {};
+        if (!raw.checkins) raw.checkins = {};
+        return raw;
+      } catch { return defaults; }
     }
     function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
     function hashSeed(str) {
@@ -800,6 +893,96 @@
         ? "先点卡片翻面，再选认识 / 不认识"
         : "已翻面 · 选择认识或不认识";
     }
+
+    const TTS_OK = typeof window !== "undefined" && "speechSynthesis" in window;
+    let preferredVoice = null;
+    let speakingBtn = null;
+    function pickEnglishVoice() {
+      if (!TTS_OK) return null;
+      const voices = speechSynthesis.getVoices() || [];
+      return (
+        voices.find((v) => v.lang === "en-GB") ||
+        voices.find((v) => (v.lang || "").toLowerCase().startsWith("en-gb")) ||
+        voices.find((v) => v.lang === "en-US") ||
+        voices.find((v) => (v.lang || "").toLowerCase().startsWith("en-us")) ||
+        voices.find((v) => (v.lang || "").toLowerCase().startsWith("en")) ||
+        null
+      );
+    }
+    function refreshVoices() {
+      preferredVoice = pickEnglishVoice();
+    }
+    function clearSpeakingUI() {
+      document.querySelectorAll(".speak-btn.speaking").forEach((b) => b.classList.remove("speaking"));
+      speakingBtn = null;
+    }
+    function speakText(text, btnEl) {
+      if (!TTS_OK || !text) return;
+      try { speechSynthesis.cancel(); } catch (_) {}
+      clearSpeakingUI();
+      const u = new SpeechSynthesisUtterance(String(text));
+      refreshVoices();
+      if (preferredVoice) {
+        u.voice = preferredVoice;
+        u.lang = preferredVoice.lang || "en-GB";
+      } else {
+        u.lang = "en-GB";
+      }
+      u.rate = 0.92;
+      u.pitch = 1;
+      if (btnEl) {
+        speakingBtn = btnEl;
+        btnEl.classList.add("speaking");
+      }
+      const done = () => {
+        if (speakingBtn === btnEl) clearSpeakingUI();
+      };
+      u.onend = done;
+      u.onerror = done;
+      speechSynthesis.speak(u);
+    }
+    function setupTtsUi() {
+      const row = document.getElementById("autoSpeakRow");
+      const wordBtn = document.getElementById("btnSpeakWord");
+      const exBtn = document.getElementById("btnSpeakEx");
+      if (!TTS_OK) {
+        if (row) row.classList.add("tts-hidden");
+        if (wordBtn) wordBtn.classList.add("tts-hidden");
+        if (exBtn) exBtn.classList.add("tts-hidden");
+        return;
+      }
+      refreshVoices();
+      if (typeof speechSynthesis.addEventListener === "function") {
+        speechSynthesis.addEventListener("voiceschanged", refreshVoices);
+      } else {
+        speechSynthesis.onvoiceschanged = refreshVoices;
+      }
+      const toggle = document.getElementById("autoSpeakToggle");
+      if (toggle) {
+        toggle.checked = state.autoSpeak !== false;
+        toggle.addEventListener("change", () => {
+          state.autoSpeak = !!toggle.checked;
+          saveState();
+        });
+      }
+      if (wordBtn) {
+        wordBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const w = queue[index];
+          if (w) speakText(w.en, wordBtn);
+        });
+      }
+      if (exBtn) {
+        exBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const w = queue[index];
+          if (w && w.ex) speakText(w.ex, exBtn);
+        });
+      }
+    }
+
     function updateStreakUI(date) {
       const checked = !!(state.checkins && state.checkins[date]);
       document.getElementById("streakCount").textContent = state.streak || 0;
@@ -821,6 +1004,7 @@
       updateStreakUI(date);
     }
     function showTab(name) {
+      if (TTS_OK) { try { speechSynthesis.cancel(); } catch (_) {} clearSpeakingUI(); }
       ["home","units","wrong","study","done"].forEach(id => document.getElementById(id).style.display = "none");
       document.querySelectorAll(".tabs button").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
       els.statsRow.style.display = (name === "study" || name === "done") ? "none" : "grid";
@@ -917,6 +1101,13 @@
       setProgressBar(true, (index) / queue.length);
       flipped = false; els.card.classList.remove("flipped");
       setMarkLocked(true);
+      clearSpeakingUI();
+      if (TTS_OK && state.autoSpeak !== false) {
+        const wordBtn = document.getElementById("btnSpeakWord");
+        setTimeout(() => {
+          if (queue[index] === w) speakText(w.en, wordBtn);
+        }, 120);
+      }
     }
     function flip() {
       if (index >= queue.length) return;
@@ -970,6 +1161,7 @@
       showTab(btn.dataset.tab);
     });
 
+    setupTtsUi();
     document.getElementById("dateLabel").textContent = formatDateCn(todayKey());
     showTab("home");
   </script>
