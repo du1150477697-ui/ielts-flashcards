@@ -763,7 +763,7 @@
     <div id="spell" class="panel">
       <div class="home-hero">
         <h2>拼写练习</h2>
-        <p class="lead">看中文写英文。可点听读听发音，不直接显示拼写。</p>
+        <p class="lead">从最简单词开始拼。看中文写英文，可点听读听发音。</p>
       </div>
       <div class="home-actions">
         <button class="primary" id="spellDailyBtn" type="button">开始今日拼写</button>
@@ -837,7 +837,133 @@
 
     const CET_UNITS = [
       {
-        id: "c1", title: "Unit 1 · CET-4 基础入门", band: "CET-4",
+        id: "c1", title: "Unit 1 · 入门 · 最简单", band: "CET-4 入门",
+        words: [
+          { en: "be", ipa: "/biː/", zh: "是；存在", ex: "I want to be a teacher.", band: "CET4" },
+          { en: "have", ipa: "/hæv/", zh: "有", ex: "I have a book.", band: "CET4" },
+          { en: "do", ipa: "/duː/", zh: "做", ex: "What do you do?", band: "CET4" },
+          { en: "go", ipa: "/ɡəʊ/", zh: "去", ex: "I go to school.", band: "CET4" },
+          { en: "come", ipa: "/kʌm/", zh: "来", ex: "Please come here.", band: "CET4" },
+          { en: "get", ipa: "/ɡet/", zh: "得到；变得", ex: "I get up early.", band: "CET4" },
+          { en: "make", ipa: "/meɪk/", zh: "制作；使得", ex: "Make a cake.", band: "CET4" },
+          { en: "take", ipa: "/teɪk/", zh: "拿；乘坐", ex: "Take a bus.", band: "CET4" },
+          { en: "see", ipa: "/siː/", zh: "看见", ex: "I see a bird.", band: "CET4" },
+          { en: "know", ipa: "/nəʊ/", zh: "知道", ex: "I know the answer.", band: "CET4" },
+          { en: "think", ipa: "/θɪŋk/", zh: "想；认为", ex: "I think so.", band: "CET4" },
+          { en: "want", ipa: "/wɒnt/", zh: "想要", ex: "I want some water.", band: "CET4" },
+          { en: "need", ipa: "/niːd/", zh: "需要", ex: "I need help.", band: "CET4" },
+          { en: "like", ipa: "/laɪk/", zh: "喜欢", ex: "I like music.", band: "CET4" },
+          { en: "use", ipa: "/juːz/", zh: "使用", ex: "Use a pen.", band: "CET4" },
+          { en: "find", ipa: "/faɪnd/", zh: "找到", ex: "Find your keys.", band: "CET4" },
+        ]
+      },
+      {
+        id: "c2", title: "Unit 2 · 入门 · 基础动词", band: "CET-4 入门",
+        words: [
+          { en: "say", ipa: "/seɪ/", zh: "说", ex: "Say it again.", band: "CET4" },
+          { en: "tell", ipa: "/tel/", zh: "告诉", ex: "Tell me the truth.", band: "CET4" },
+          { en: "ask", ipa: "/ɑːsk/", zh: "问", ex: "Ask a question.", band: "CET4" },
+          { en: "give", ipa: "/ɡɪv/", zh: "给", ex: "Give me a hand.", band: "CET4" },
+          { en: "put", ipa: "/pʊt/", zh: "放", ex: "Put it on the table.", band: "CET4" },
+          { en: "keep", ipa: "/kiːp/", zh: "保持", ex: "Keep quiet.", band: "CET4" },
+          { en: "let", ipa: "/let/", zh: "让", ex: "Let me try.", band: "CET4" },
+          { en: "begin", ipa: "/bɪˈɡɪn/", zh: "开始", ex: "Begin your work.", band: "CET4" },
+          { en: "start", ipa: "/stɑːt/", zh: "开始", ex: "Start the engine.", band: "CET4" },
+          { en: "stop", ipa: "/stɒp/", zh: "停止", ex: "Stop talking.", band: "CET4" },
+          { en: "help", ipa: "/help/", zh: "帮助", ex: "Help each other.", band: "CET4" },
+          { en: "show", ipa: "/ʃəʊ/", zh: "展示", ex: "Show me your ID.", band: "CET4" },
+          { en: "try", ipa: "/traɪ/", zh: "尝试", ex: "Try again.", band: "CET4" },
+          { en: "call", ipa: "/kɔːl/", zh: "叫；打电话", ex: "Call me tonight.", band: "CET4" },
+          { en: "work", ipa: "/wɜːk/", zh: "工作", ex: "I work hard.", band: "CET4" },
+          { en: "play", ipa: "/pleɪ/", zh: "玩；演奏", ex: "Play football.", band: "CET4" },
+        ]
+      },
+      {
+        id: "c3", title: "Unit 3 · 基础日常名词", band: "CET-4 基础",
+        words: [
+          { en: "time", ipa: "/taɪm/", zh: "时间", ex: "I have no time.", band: "CET4" },
+          { en: "day", ipa: "/deɪ/", zh: "天；白天", ex: "Have a nice day.", band: "CET4" },
+          { en: "year", ipa: "/jɪə/", zh: "年", ex: "This year is special.", band: "CET4" },
+          { en: "people", ipa: "/ˈpiːpl/", zh: "人们", ex: "Many people came.", band: "CET4" },
+          { en: "man", ipa: "/mæn/", zh: "男人", ex: "A tall man walked by.", band: "CET4" },
+          { en: "woman", ipa: "/ˈwʊmən/", zh: "女人", ex: "The woman smiled.", band: "CET4" },
+          { en: "child", ipa: "/tʃaɪld/", zh: "孩子", ex: "Every child needs love.", band: "CET4" },
+          { en: "family", ipa: "/ˈfæməli/", zh: "家庭", ex: "My family is big.", band: "CET4" },
+          { en: "friend", ipa: "/frend/", zh: "朋友", ex: "She is my friend.", band: "CET4" },
+          { en: "home", ipa: "/həʊm/", zh: "家", ex: "Go home early.", band: "CET4" },
+          { en: "school", ipa: "/skuːl/", zh: "学校", ex: "School starts at eight.", band: "CET4" },
+          { en: "book", ipa: "/bʊk/", zh: "书", ex: "Read this book.", band: "CET4" },
+          { en: "water", ipa: "/ˈwɔːtə/", zh: "水", ex: "Drink more water.", band: "CET4" },
+          { en: "food", ipa: "/fuːd/", zh: "食物", ex: "The food is delicious.", band: "CET4" },
+          { en: "money", ipa: "/ˈmʌni/", zh: "钱", ex: "Save your money.", band: "CET4" },
+          { en: "room", ipa: "/ruːm/", zh: "房间", ex: "Clean your room.", band: "CET4" },
+        ]
+      },
+      {
+        id: "c4", title: "Unit 4 · 基础形容词与常用", band: "CET-4 基础",
+        words: [
+          { en: "good", ipa: "/ɡʊd/", zh: "好的", ex: "It is a good idea.", band: "CET4" },
+          { en: "new", ipa: "/njuː/", zh: "新的", ex: "I bought a new phone.", band: "CET4" },
+          { en: "old", ipa: "/əʊld/", zh: "旧的；老的", ex: "This is an old house.", band: "CET4" },
+          { en: "big", ipa: "/bɪɡ/", zh: "大的", ex: "A big city.", band: "CET4" },
+          { en: "small", ipa: "/smɔːl/", zh: "小的", ex: "A small bag.", band: "CET4" },
+          { en: "long", ipa: "/lɒŋ/", zh: "长的", ex: "A long road.", band: "CET4" },
+          { en: "short", ipa: "/ʃɔːt/", zh: "短的", ex: "A short break.", band: "CET4" },
+          { en: "high", ipa: "/haɪ/", zh: "高的", ex: "A high mountain.", band: "CET4" },
+          { en: "important", ipa: "/ɪmˈpɔːtnt/", zh: "重要的", ex: "This is important.", band: "CET4" },
+          { en: "different", ipa: "/ˈdɪfrənt/", zh: "不同的", ex: "We have different views.", band: "CET4" },
+          { en: "young", ipa: "/jʌŋ/", zh: "年轻的", ex: "A young student.", band: "CET4" },
+          { en: "early", ipa: "/ˈɜːli/", zh: "早的", ex: "Wake up early.", band: "CET4" },
+          { en: "late", ipa: "/leɪt/", zh: "晚的", ex: "Sorry I am late.", band: "CET4" },
+          { en: "easy", ipa: "/ˈiːzi/", zh: "容易的", ex: "The test is easy.", band: "CET4" },
+          { en: "hard", ipa: "/hɑːd/", zh: "困难的；硬的", ex: "The job is hard.", band: "CET4" },
+          { en: "happy", ipa: "/ˈhæpi/", zh: "快乐的", ex: "I feel happy.", band: "CET4" },
+        ]
+      },
+      {
+        id: "c5", title: "Unit 5 · 校园与学习", band: "CET-4 校园",
+        words: [
+          { en: "study", ipa: "/ˈstʌdi/", zh: "学习；研究", ex: "I study English.", band: "CET4" },
+          { en: "learn", ipa: "/lɜːn/", zh: "学习", ex: "Learn from mistakes.", band: "CET4" },
+          { en: "read", ipa: "/riːd/", zh: "阅读", ex: "Read every day.", band: "CET4" },
+          { en: "write", ipa: "/raɪt/", zh: "写", ex: "Write a letter.", band: "CET4" },
+          { en: "listen", ipa: "/ˈlɪsn/", zh: "听", ex: "Listen carefully.", band: "CET4" },
+          { en: "speak", ipa: "/spiːk/", zh: "说", ex: "Speak slowly.", band: "CET4" },
+          { en: "class", ipa: "/klɑːs/", zh: "课；班级", ex: "I have a class now.", band: "CET4" },
+          { en: "teacher", ipa: "/ˈtiːtʃə/", zh: "老师", ex: "Ask the teacher.", band: "CET4" },
+          { en: "student", ipa: "/ˈstjuːdnt/", zh: "学生", ex: "She is a student.", band: "CET4" },
+          { en: "exam", ipa: "/ɪɡˈzæm/", zh: "考试", ex: "The exam is tomorrow.", band: "CET4" },
+          { en: "test", ipa: "/test/", zh: "测验", ex: "Pass the test.", band: "CET4" },
+          { en: "homework", ipa: "/ˈhəʊmwɜːk/", zh: "家庭作业", ex: "Finish your homework.", band: "CET4" },
+          { en: "lesson", ipa: "/ˈlesn/", zh: "课；教训", ex: "Today's lesson is useful.", band: "CET4" },
+          { en: "answer", ipa: "/ˈɑːnsə/", zh: "回答；答案", ex: "Write the answer.", band: "CET4" },
+          { en: "question", ipa: "/ˈkwestʃən/", zh: "问题", ex: "That is a good question.", band: "CET4" },
+          { en: "grade", ipa: "/ɡreɪd/", zh: "成绩；年级", ex: "I got a high grade.", band: "CET4" },
+        ]
+      },
+      {
+        id: "c6", title: "Unit 6 · 日常社交动词", band: "CET-4 日常",
+        words: [
+          { en: "meet", ipa: "/miːt/", zh: "遇见", ex: "Nice to meet you.", band: "CET4" },
+          { en: "visit", ipa: "/ˈvɪzɪt/", zh: "参观；拜访", ex: "Visit your parents.", band: "CET4" },
+          { en: "buy", ipa: "/baɪ/", zh: "买", ex: "Buy some fruit.", band: "CET4" },
+          { en: "sell", ipa: "/sel/", zh: "卖", ex: "They sell books.", band: "CET4" },
+          { en: "pay", ipa: "/peɪ/", zh: "支付", ex: "Pay the bill.", band: "CET4" },
+          { en: "bring", ipa: "/brɪŋ/", zh: "带来", ex: "Bring your notebook.", band: "CET4" },
+          { en: "carry", ipa: "/ˈkæri/", zh: "携带", ex: "Carry a bag.", band: "CET4" },
+          { en: "send", ipa: "/send/", zh: "发送", ex: "Send an email.", band: "CET4" },
+          { en: "receive", ipa: "/rɪˈsiːv/", zh: "收到", ex: "I received a gift.", band: "CET4" },
+          { en: "open", ipa: "/ˈəʊpən/", zh: "打开", ex: "Open the door.", band: "CET4" },
+          { en: "close", ipa: "/kləʊz/", zh: "关闭", ex: "Close the window.", band: "CET4" },
+          { en: "change", ipa: "/tʃeɪndʒ/", zh: "改变", ex: "Things can change.", band: "CET4" },
+          { en: "move", ipa: "/muːv/", zh: "移动", ex: "Move to the left.", band: "CET4" },
+          { en: "stay", ipa: "/steɪ/", zh: "停留", ex: "Stay at home.", band: "CET4" },
+          { en: "leave", ipa: "/liːv/", zh: "离开", ex: "Leave the room.", band: "CET4" },
+          { en: "return", ipa: "/rɪˈtɜːn/", zh: "返回", ex: "Return the book.", band: "CET4" },
+        ]
+      },
+      {
+        id: "c7", title: "Unit 7 · CET-4 高频核心", band: "CET-4",
         words: [
           { en: "ability", ipa: "/əˈbɪləti/", zh: "能力", ex: "She has the ability to lead.", band: "CET4" },
           { en: "accept", ipa: "/əkˈsept/", zh: "接受", ex: "I accept your advice.", band: "CET4" },
@@ -848,11 +974,17 @@
           { en: "agree", ipa: "/əˈɡriː/", zh: "同意", ex: "Do you agree with me?", band: "CET4" },
           { en: "allow", ipa: "/əˈlaʊ/", zh: "允许", ex: "Pets are not allowed here.", band: "CET4" },
           { en: "appear", ipa: "/əˈpɪə/", zh: "出现；似乎", ex: "A rainbow appeared after rain.", band: "CET4" },
-          { en: "average", ipa: "/ˈævərɪdʒ/", zh: "平均的；普通的", ex: "His score is above average.", band: "CET4" }
+          { en: "average", ipa: "/ˈævərɪdʒ/", zh: "平均的", ex: "His score is above average.", band: "CET4" },
+          { en: "avoid", ipa: "/əˈvɔɪd/", zh: "避免", ex: "Avoid making the same mistake.", band: "CET4" },
+          { en: "available", ipa: "/əˈveɪləbl/", zh: "可获得的", ex: "Tickets are still available.", band: "CET4" },
+          { en: "cause", ipa: "/kɔːz/", zh: "引起；原因", ex: "Stress can cause illness.", band: "CET4" },
+          { en: "choose", ipa: "/tʃuːz/", zh: "选择", ex: "Choose carefully.", band: "CET4" },
+          { en: "decide", ipa: "/dɪˈsaɪd/", zh: "决定", ex: "Decide what to do.", band: "CET4" },
+          { en: "enough", ipa: "/ɪˈnʌf/", zh: "足够的", ex: "There is enough time.", band: "CET4" },
         ]
       },
       {
-        id: "c2", title: "Unit 2 · CET-4 校园生活", band: "CET-4",
+        id: "c8", title: "Unit 8 · CET-4 校园进阶", band: "CET-4",
         words: [
           { en: "attend", ipa: "/əˈtend/", zh: "参加；出席", ex: "Students attend classes daily.", band: "CET4" },
           { en: "campus", ipa: "/ˈkæmpəs/", zh: "校园", ex: "The campus is beautiful.", band: "CET4" },
@@ -863,11 +995,17 @@
           { en: "schedule", ipa: "/ˈʃedjuːl/", zh: "时间表", ex: "Check the exam schedule.", band: "CET4" },
           { en: "semester", ipa: "/sɪˈmestə/", zh: "学期", ex: "This semester ends in June.", band: "CET4" },
           { en: "subject", ipa: "/ˈsʌbdʒɪkt/", zh: "科目；主题", ex: "Math is my favorite subject.", band: "CET4" },
-          { en: "tuition", ipa: "/tjuˈɪʃn/", zh: "学费", ex: "Tuition fees are rising.", band: "CET4" }
+          { en: "tuition", ipa: "/tjuˈɪʃn/", zh: "学费", ex: "Tuition fees are rising.", band: "CET4" },
+          { en: "research", ipa: "/rɪˈsɜːtʃ/", zh: "研究", ex: "Do research online.", band: "CET4" },
+          { en: "project", ipa: "/ˈprɒdʒekt/", zh: "项目", ex: "Finish the group project.", band: "CET4" },
+          { en: "practice", ipa: "/ˈpræktɪs/", zh: "练习；实践", ex: "Practice makes perfect.", band: "CET4" },
+          { en: "review", ipa: "/rɪˈvjuː/", zh: "复习；回顾", ex: "Review your notes.", band: "CET4" },
+          { en: "memory", ipa: "/ˈmeməri/", zh: "记忆", ex: "I have a good memory.", band: "CET4" },
+          { en: "knowledge", ipa: "/ˈnɒlɪdʒ/", zh: "知识", ex: "Knowledge is power.", band: "CET4" },
         ]
       },
       {
-        id: "c3", title: "Unit 3 · CET-4 日常社交", band: "CET-4",
+        id: "c9", title: "Unit 9 · CET-4 社交与态度", band: "CET-4",
         words: [
           { en: "attitude", ipa: "/ˈætɪtjuːd/", zh: "态度", ex: "A positive attitude helps.", band: "CET4" },
           { en: "aware", ipa: "/əˈweə/", zh: "意识到的", ex: "She is aware of the risk.", band: "CET4" },
@@ -878,26 +1016,38 @@
           { en: "community", ipa: "/kəˈmjuːnəti/", zh: "社区；群体", ex: "Join the local community.", band: "CET4" },
           { en: "confident", ipa: "/ˈkɒnfɪdənt/", zh: "自信的", ex: "He feels confident now.", band: "CET4" },
           { en: "culture", ipa: "/ˈkʌltʃə/", zh: "文化", ex: "Language reflects culture.", band: "CET4" },
-          { en: "decision", ipa: "/dɪˈsɪʒn/", zh: "决定", ex: "It was a hard decision.", band: "CET4" }
+          { en: "decision", ipa: "/dɪˈsɪʒn/", zh: "决定", ex: "It was a hard decision.", band: "CET4" },
+          { en: "effort", ipa: "/ˈefət/", zh: "努力", ex: "Success needs effort.", band: "CET4" },
+          { en: "emotion", ipa: "/ɪˈməʊʃn/", zh: "情绪", ex: "Control your emotions.", band: "CET4" },
+          { en: "habit", ipa: "/ˈhæbɪt/", zh: "习惯", ex: "Build a good habit.", band: "CET4" },
+          { en: "respect", ipa: "/rɪˈspekt/", zh: "尊重", ex: "Respect other people.", band: "CET4" },
+          { en: "responsible", ipa: "/rɪˈspɒnsəbl/", zh: "负责的", ex: "Be responsible for your work.", band: "CET4" },
+          { en: "support", ipa: "/səˈpɔːt/", zh: "支持", ex: "Parents support children.", band: "CET4" },
         ]
       },
       {
-        id: "c4", title: "Unit 4 · CET-4 考试高频", band: "CET-4",
+        id: "c10", title: "Unit 10 · CET-4 考试进阶", band: "CET-4",
         words: [
-          { en: "available", ipa: "/əˈveɪləbl/", zh: "可获得的", ex: "Tickets are still available.", band: "CET4" },
-          { en: "avoid", ipa: "/əˈvɔɪd/", zh: "避免", ex: "Avoid making the same mistake.", band: "CET4" },
-          { en: "cause", ipa: "/kɔːz/", zh: "引起；原因", ex: "Stress can cause illness.", band: "CET4" },
           { en: "compare", ipa: "/kəmˈpeə/", zh: "比较", ex: "Compare the two reports.", band: "CET4" },
           { en: "consider", ipa: "/kənˈsɪdə/", zh: "考虑", ex: "Consider all the options.", band: "CET4" },
           { en: "develop", ipa: "/dɪˈveləp/", zh: "发展；培养", ex: "Develop good study habits.", band: "CET4" },
           { en: "effect", ipa: "/ɪˈfekt/", zh: "影响；效果", ex: "The effect was immediate.", band: "CET4" },
           { en: "improve", ipa: "/ɪmˈpruːv/", zh: "提高；改进", ex: "Practice can improve skills.", band: "CET4" },
           { en: "include", ipa: "/ɪnˈkluːd/", zh: "包括", ex: "The price includes tax.", band: "CET4" },
-          { en: "require", ipa: "/rɪˈkwaɪə/", zh: "需要；要求", ex: "The job requires experience.", band: "CET4" }
+          { en: "increase", ipa: "/ɪnˈkriːs/", zh: "增加", ex: "Sales increased last year.", band: "CET4" },
+          { en: "provide", ipa: "/prəˈvaɪd/", zh: "提供", ex: "Schools provide education.", band: "CET4" },
+          { en: "require", ipa: "/rɪˈkwaɪə/", zh: "需要；要求", ex: "The job requires experience.", band: "CET4" },
+          { en: "result", ipa: "/rɪˈzʌlt/", zh: "结果", ex: "The result was good.", band: "CET4" },
+          { en: "suggest", ipa: "/səˈdʒest/", zh: "建议", ex: "Experts suggest more rest.", band: "CET4" },
+          { en: "prefer", ipa: "/prɪˈfɜː/", zh: "更喜欢", ex: "I prefer tea to coffee.", band: "CET4" },
+          { en: "purpose", ipa: "/ˈpɜːpəs/", zh: "目的", ex: "What is your purpose?", band: "CET4" },
+          { en: "reason", ipa: "/ˈriːzn/", zh: "理由", ex: "Give a clear reason.", band: "CET4" },
+          { en: "similar", ipa: "/ˈsɪmələ/", zh: "相似的", ex: "The two ideas are similar.", band: "CET4" },
+          { en: "success", ipa: "/səkˈses/", zh: "成功", ex: "Hard work brings success.", band: "CET4" },
         ]
       },
       {
-        id: "c5", title: "Unit 5 · CET-4 进阶常用", band: "CET-4",
+        id: "c11", title: "Unit 11 · CET-4 社会与环境", band: "CET-4",
         words: [
           { en: "atmosphere", ipa: "/ˈætməsfɪə/", zh: "大气；氛围", ex: "The atmosphere was friendly.", band: "CET4" },
           { en: "conclude", ipa: "/kənˈkluːd/", zh: "得出结论", ex: "We conclude from the data.", band: "CET4" },
@@ -908,11 +1058,17 @@
           { en: "factor", ipa: "/ˈfæktə/", zh: "因素", ex: "Cost is a key factor.", band: "CET4" },
           { en: "focus", ipa: "/ˈfəʊkəs/", zh: "集中；焦点", ex: "Focus on the main idea.", band: "CET4" },
           { en: "method", ipa: "/ˈmeθəd/", zh: "方法", ex: "Try a new study method.", band: "CET4" },
-          { en: "opportunity", ipa: "/ˌɒpəˈtjuːnəti/", zh: "机会", ex: "This is a rare opportunity.", band: "CET4" }
+          { en: "opportunity", ipa: "/ˌɒpəˈtjuːnəti/", zh: "机会", ex: "This is a rare opportunity.", band: "CET4" },
+          { en: "pollution", ipa: "/pəˈluːʃn/", zh: "污染", ex: "Air pollution is serious.", band: "CET4" },
+          { en: "population", ipa: "/ˌpɒpjuˈleɪʃn/", zh: "人口", ex: "The population is growing.", band: "CET4" },
+          { en: "society", ipa: "/səˈsaɪəti/", zh: "社会", ex: "We live in a modern society.", band: "CET4" },
+          { en: "technology", ipa: "/tekˈnɒlədʒi/", zh: "技术", ex: "Technology changes life.", band: "CET4" },
+          { en: "traffic", ipa: "/ˈtræfɪk/", zh: "交通", ex: "Traffic is heavy today.", band: "CET4" },
+          { en: "energy", ipa: "/ˈenədʒi/", zh: "能量；精力", ex: "Save energy at home.", band: "CET4" },
         ]
       },
       {
-        id: "c6", title: "Unit 6 · CET-6 学术入门", band: "CET-6",
+        id: "c12", title: "Unit 12 · CET-6 学术入门", band: "CET-6",
         words: [
           { en: "abandon", ipa: "/əˈbændən/", zh: "放弃；遗弃", ex: "Do not abandon your plan.", band: "CET6" },
           { en: "accompany", ipa: "/əˈkʌmpəni/", zh: "陪伴；伴随", ex: "Pain may accompany fever.", band: "CET6" },
@@ -923,11 +1079,17 @@
           { en: "analyze", ipa: "/ˈænəlaɪz/", zh: "分析", ex: "Analyze the survey results.", band: "CET6" },
           { en: "approach", ipa: "/əˈprəʊtʃ/", zh: "方法；接近", ex: "Try a different approach.", band: "CET6" },
           { en: "assume", ipa: "/əˈsjuːm/", zh: "假定；承担", ex: "Don't assume the answer.", band: "CET6" },
-          { en: "authority", ipa: "/ɔːˈθɒrəti/", zh: "权威；当局", ex: "Local authorities responded.", band: "CET6" }
+          { en: "authority", ipa: "/ɔːˈθɒrəti/", zh: "权威；当局", ex: "Local authorities responded.", band: "CET6" },
+          { en: "capacity", ipa: "/kəˈpæsəti/", zh: "能力；容量", ex: "He has a great capacity for learning.", band: "CET6" },
+          { en: "category", ipa: "/ˈkætəɡəri/", zh: "类别", ex: "Put them in one category.", band: "CET6" },
+          { en: "complex", ipa: "/ˈkɒmpleks/", zh: "复杂的", ex: "It is a complex problem.", band: "CET6" },
+          { en: "consume", ipa: "/kənˈsjuːm/", zh: "消耗；消费", ex: "Cars consume fuel.", band: "CET6" },
+          { en: "contrast", ipa: "/ˈkɒntrɑːst/", zh: "对比", ex: "In contrast, she disagreed.", band: "CET6" },
+          { en: "debate", ipa: "/dɪˈbeɪt/", zh: "辩论", ex: "They debate the issue.", band: "CET6" },
         ]
       },
       {
-        id: "c7", title: "Unit 7 · CET-6 抽象概念", band: "CET-6",
+        id: "c13", title: "Unit 13 · CET-6 抽象概念", band: "CET-6",
         words: [
           { en: "ambiguous", ipa: "/æmˈbɪɡjuəs/", zh: "模棱两可的", ex: "The rule is ambiguous.", band: "CET6" },
           { en: "comprehensive", ipa: "/ˌkɒmprɪˈhensɪv/", zh: "全面的", ex: "We need a comprehensive plan.", band: "CET6" },
@@ -938,11 +1100,38 @@
           { en: "dominate", ipa: "/ˈdɒmɪneɪt/", zh: "支配；占优", ex: "One team dominated the match.", band: "CET6" },
           { en: "emphasize", ipa: "/ˈemfəsaɪz/", zh: "强调", ex: "Teachers emphasize practice.", band: "CET6" },
           { en: "inevitable", ipa: "/ɪnˈevɪtəbl/", zh: "不可避免的", ex: "Change is inevitable.", band: "CET6" },
-          { en: "perspective", ipa: "/pəˈspektɪv/", zh: "视角；观点", ex: "See it from another perspective.", band: "CET6" }
+          { en: "perspective", ipa: "/pəˈspektɪv/", zh: "视角；观点", ex: "See it from another perspective.", band: "CET6" },
+          { en: "potential", ipa: "/pəˈtenʃl/", zh: "潜在的；潜力", ex: "She has great potential.", band: "CET6" },
+          { en: "priority", ipa: "/praɪˈɒrəti/", zh: "优先事项", ex: "Health is my priority.", band: "CET6" },
+          { en: "relevant", ipa: "/ˈreləvənt/", zh: "相关的", ex: "Give relevant examples.", band: "CET6" },
+          { en: "strategy", ipa: "/ˈstrætədʒi/", zh: "策略", ex: "We need a better strategy.", band: "CET6" },
+          { en: "trend", ipa: "/trend/", zh: "趋势", ex: "This is a long-term trend.", band: "CET6" },
+          { en: "valid", ipa: "/ˈvælɪd/", zh: "有效的；合理的", ex: "That is a valid point.", band: "CET6" },
         ]
       },
       {
-        id: "c8", title: "Unit 8 · CET-6 高阶进阶", band: "CET-6",
+        id: "c14", title: "Unit 14 · CET-6 进阶学术", band: "CET-6",
+        words: [
+          { en: "assess", ipa: "/əˈses/", zh: "评估", ex: "Teachers assess students.", band: "CET6" },
+          { en: "concept", ipa: "/ˈkɒnsept/", zh: "概念", ex: "This is a key concept.", band: "CET6" },
+          { en: "context", ipa: "/ˈkɒntekst/", zh: "背景；语境", ex: "Read words in context.", band: "CET6" },
+          { en: "establish", ipa: "/ɪˈstæblɪʃ/", zh: "建立；确立", ex: "Establish a clear plan.", band: "CET6" },
+          { en: "evaluate", ipa: "/ɪˈvæljueɪt/", zh: "评价；评估", ex: "Evaluate the results.", band: "CET6" },
+          { en: "impact", ipa: "/ˈɪmpækt/", zh: "影响；冲击", ex: "Technology has a huge impact.", band: "CET6" },
+          { en: "indicate", ipa: "/ˈɪndɪkeɪt/", zh: "表明；指示", ex: "Figures indicate growth.", band: "CET6" },
+          { en: "interpret", ipa: "/ɪnˈtɜːprɪt/", zh: "解释；口译", ex: "Interpret the chart.", band: "CET6" },
+          { en: "maintain", ipa: "/meɪnˈteɪn/", zh: "维持", ex: "Maintain a healthy lifestyle.", band: "CET6" },
+          { en: "significant", ipa: "/sɪɡˈnɪfɪkənt/", zh: "显著的", ex: "A significant change.", band: "CET6" },
+          { en: "theory", ipa: "/ˈθɪəri/", zh: "理论", ex: "This theory explains the data.", band: "CET6" },
+          { en: "transform", ipa: "/trænsˈfɔːm/", zh: "转变", ex: "Digital tools transform learning.", band: "CET6" },
+          { en: "undergo", ipa: "/ˌʌndəˈɡəʊ/", zh: "经历", ex: "The city underwent change.", band: "CET6" },
+          { en: "vary", ipa: "/ˈveəri/", zh: "变化", ex: "Prices vary by region.", band: "CET6" },
+          { en: "widespread", ipa: "/ˈwaɪdspred/", zh: "广泛的", ex: "The idea is widespread.", band: "CET6" },
+          { en: "outcome", ipa: "/ˈaʊtkʌm/", zh: "结果", ex: "The outcome was positive.", band: "CET6" },
+        ]
+      },
+      {
+        id: "c15", title: "Unit 15 · CET-6 高阶精选", band: "CET-6 高阶",
         words: [
           { en: "deteriorate", ipa: "/dɪˈtɪəriəreɪt/", zh: "恶化；变坏", ex: "Air quality may deteriorate.", band: "CET6" },
           { en: "elaborate", ipa: "/ɪˈlæbərət/", zh: "详尽的；详述", ex: "Please elaborate on your idea.", band: "CET6" },
@@ -953,14 +1142,83 @@
           { en: "prominent", ipa: "/ˈprɒmɪnənt/", zh: "突出的；著名的", ex: "He is a prominent scientist.", band: "CET6" },
           { en: "speculate", ipa: "/ˈspekjuleɪt/", zh: "推测；投机", ex: "Experts speculate about causes.", band: "CET6" },
           { en: "undermine", ipa: "/ˌʌndəˈmaɪn/", zh: "削弱；损害", ex: "Rumors undermine trust.", band: "CET6" },
-          { en: "vulnerable", ipa: "/ˈvʌlnərəbl/", zh: "脆弱的；易受伤害的", ex: "Children are more vulnerable.", band: "CET6" }
+          { en: "vulnerable", ipa: "/ˈvʌlnərəbl/", zh: "脆弱的", ex: "Children are more vulnerable.", band: "CET6" },
+          { en: "compensate", ipa: "/ˈkɒmpenseɪt/", zh: "补偿", ex: "Nothing can compensate for lost time.", band: "CET6" },
+          { en: "constitute", ipa: "/ˈkɒnstɪtjuːt/", zh: "构成", ex: "These factors constitute risk.", band: "CET6" },
+          { en: "diminish", ipa: "/dɪˈmɪnɪʃ/", zh: "减少；削弱", ex: "Trust may diminish over time.", band: "CET6" },
+          { en: "impose", ipa: "/ɪmˈpəʊz/", zh: "强加；征收", ex: "Governments impose taxes.", band: "CET6" },
+          { en: "stimulate", ipa: "/ˈstɪmjuleɪt/", zh: "刺激；促进", ex: "Questions stimulate thinking.", band: "CET6" },
+          { en: "unprecedented", ipa: "/ʌnˈpresɪdentɪd/", zh: "史无前例的", ex: "An unprecedented challenge.", band: "CET6" },
         ]
-      }
+      },
     ];
 
     const IELTS_UNITS = [
       {
-        id: "u1", title: "Unit 1 · Band 4 日常基础", band: "Band 4",
+        id: "u1", title: "Unit 1 · 入门 · 最简单", band: "Band 3",
+        words: [
+          { en: "hello", ipa: "/həˈləʊ/", zh: "你好", ex: "Hello, how are you?", band: "3" },
+          { en: "yes", ipa: "/jes/", zh: "是", ex: "Yes, I can.", band: "3" },
+          { en: "no", ipa: "/nəʊ/", zh: "不", ex: "No, thank you.", band: "3" },
+          { en: "please", ipa: "/pliːz/", zh: "请", ex: "Please sit down.", band: "3" },
+          { en: "thanks", ipa: "/θæŋks/", zh: "谢谢", ex: "Thanks for your help.", band: "3" },
+          { en: "sorry", ipa: "/ˈsɒri/", zh: "对不起", ex: "I am sorry.", band: "3" },
+          { en: "name", ipa: "/neɪm/", zh: "名字", ex: "My name is Anna.", band: "3" },
+          { en: "help", ipa: "/help/", zh: "帮助", ex: "Can you help me?", band: "3" },
+          { en: "today", ipa: "/təˈdeɪ/", zh: "今天", ex: "I am busy today.", band: "3" },
+          { en: "tomorrow", ipa: "/təˈmɒrəʊ/", zh: "明天", ex: "See you tomorrow.", band: "3" },
+          { en: "yesterday", ipa: "/ˈjestədeɪ/", zh: "昨天", ex: "I stayed home yesterday.", band: "3" },
+          { en: "now", ipa: "/naʊ/", zh: "现在", ex: "Do it now.", band: "3" },
+          { en: "here", ipa: "/hɪə/", zh: "这里", ex: "Come here.", band: "3" },
+          { en: "there", ipa: "/ðeə/", zh: "那里", ex: "Look there.", band: "3" },
+          { en: "good", ipa: "/ɡʊd/", zh: "好的", ex: "Have a good day.", band: "3" },
+          { en: "bad", ipa: "/bæd/", zh: "坏的", ex: "That is a bad idea.", band: "3" },
+        ]
+      },
+      {
+        id: "u2", title: "Unit 2 · 入门 · 基础动词", band: "Band 3–4",
+        words: [
+          { en: "be", ipa: "/biː/", zh: "是", ex: "I want to be ready.", band: "3" },
+          { en: "have", ipa: "/hæv/", zh: "有", ex: "I have two sisters.", band: "3" },
+          { en: "do", ipa: "/duː/", zh: "做", ex: "What do you do?", band: "3" },
+          { en: "go", ipa: "/ɡəʊ/", zh: "去", ex: "Go to the park.", band: "3" },
+          { en: "come", ipa: "/kʌm/", zh: "来", ex: "Come with me.", band: "3" },
+          { en: "get", ipa: "/ɡet/", zh: "得到", ex: "Get some rest.", band: "3" },
+          { en: "make", ipa: "/meɪk/", zh: "制作", ex: "Make a plan.", band: "3" },
+          { en: "take", ipa: "/teɪk/", zh: "拿；花费", ex: "It takes time.", band: "3" },
+          { en: "see", ipa: "/siː/", zh: "看见", ex: "I see the point.", band: "3" },
+          { en: "know", ipa: "/nəʊ/", zh: "知道", ex: "I know him.", band: "3" },
+          { en: "think", ipa: "/θɪŋk/", zh: "想", ex: "I think you are right.", band: "3" },
+          { en: "want", ipa: "/wɒnt/", zh: "想要", ex: "I want to learn.", band: "3" },
+          { en: "need", ipa: "/niːd/", zh: "需要", ex: "I need a break.", band: "3" },
+          { en: "like", ipa: "/laɪk/", zh: "喜欢", ex: "I like reading.", band: "3" },
+          { en: "live", ipa: "/lɪv/", zh: "居住", ex: "I live in Shanghai.", band: "3" },
+          { en: "work", ipa: "/wɜːk/", zh: "工作", ex: "I work from home.", band: "3" },
+        ]
+      },
+      {
+        id: "u3", title: "Unit 3 · 基础日常", band: "Band 4 日常",
+        words: [
+          { en: "time", ipa: "/taɪm/", zh: "时间", ex: "Time flies.", band: "4" },
+          { en: "day", ipa: "/deɪ/", zh: "天", ex: "Have a nice day.", band: "4" },
+          { en: "people", ipa: "/ˈpiːpl/", zh: "人们", ex: "People need water.", band: "4" },
+          { en: "family", ipa: "/ˈfæməli/", zh: "家庭", ex: "Family comes first.", band: "4" },
+          { en: "friend", ipa: "/frend/", zh: "朋友", ex: "A true friend helps.", band: "4" },
+          { en: "home", ipa: "/həʊm/", zh: "家", ex: "Stay at home.", band: "4" },
+          { en: "school", ipa: "/skuːl/", zh: "学校", ex: "School is nearby.", band: "4" },
+          { en: "food", ipa: "/fuːd/", zh: "食物", ex: "Healthy food matters.", band: "4" },
+          { en: "water", ipa: "/ˈwɔːtə/", zh: "水", ex: "Drink clean water.", band: "4" },
+          { en: "city", ipa: "/ˈsɪti/", zh: "城市", ex: "This city is busy.", band: "4" },
+          { en: "job", ipa: "/dʒɒb/", zh: "工作", ex: "Find a good job.", band: "4" },
+          { en: "money", ipa: "/ˈmʌni/", zh: "钱", ex: "Save money.", band: "4" },
+          { en: "health", ipa: "/helθ/", zh: "健康", ex: "Health is wealth.", band: "4" },
+          { en: "travel", ipa: "/ˈtrævl/", zh: "旅行", ex: "I love to travel.", band: "4" },
+          { en: "music", ipa: "/ˈmjuːzɪk/", zh: "音乐", ex: "Music relaxes me.", band: "4" },
+          { en: "sport", ipa: "/spɔːt/", zh: "运动", ex: "Sport keeps you fit.", band: "4" },
+        ]
+      },
+      {
+        id: "u4", title: "Unit 4 · Band 4 生存词汇", band: "Band 4",
         words: [
           { en: "agree", ipa: "/əˈɡriː/", zh: "同意", ex: "I agree with your idea.", band: "4" },
           { en: "choose", ipa: "/tʃuːz/", zh: "选择", ex: "Choose the best answer.", band: "4" },
@@ -971,11 +1229,38 @@
           { en: "problem", ipa: "/ˈprɑːbləm/", zh: "问题", ex: "This is a common problem.", band: "4" },
           { en: "result", ipa: "/rɪˈzʌlt/", zh: "结果", ex: "The result was good.", band: "4" },
           { en: "simple", ipa: "/ˈsɪmpl/", zh: "简单的", ex: "Keep the plan simple.", band: "4" },
-          { en: "useful", ipa: "/ˈjuːsfl/", zh: "有用的", ex: "This tip is useful.", band: "4" }
+          { en: "useful", ipa: "/ˈjuːsfl/", zh: "有用的", ex: "This tip is useful.", band: "4" },
+          { en: "buy", ipa: "/baɪ/", zh: "买", ex: "Buy a ticket.", band: "4" },
+          { en: "eat", ipa: "/iːt/", zh: "吃", ex: "Eat breakfast.", band: "4" },
+          { en: "drink", ipa: "/drɪŋk/", zh: "喝", ex: "Drink tea.", band: "4" },
+          { en: "sleep", ipa: "/sliːp/", zh: "睡觉", ex: "Sleep well.", band: "4" },
+          { en: "walk", ipa: "/wɔːk/", zh: "走路", ex: "Walk to school.", band: "4" },
+          { en: "watch", ipa: "/wɒtʃ/", zh: "观看", ex: "Watch a film.", band: "4" },
         ]
       },
       {
-        id: "u2", title: "Unit 2 · Band 5 常用扩展", band: "Band 5",
+        id: "u5", title: "Unit 5 · Band 4–5 常用扩展", band: "Band 4–5",
+        words: [
+          { en: "important", ipa: "/ɪmˈpɔːtnt/", zh: "重要的", ex: "Education is important.", band: "4" },
+          { en: "different", ipa: "/ˈdɪfrənt/", zh: "不同的", ex: "We have different ideas.", band: "4" },
+          { en: "popular", ipa: "/ˈpɒpjələ/", zh: "受欢迎的", ex: "This app is popular.", band: "4" },
+          { en: "possible", ipa: "/ˈpɒsəbl/", zh: "可能的", ex: "Is it possible?", band: "4" },
+          { en: "common", ipa: "/ˈkɒmən/", zh: "常见的", ex: "This is a common problem.", band: "4" },
+          { en: "special", ipa: "/ˈspeʃl/", zh: "特别的", ex: "A special day.", band: "4" },
+          { en: "usual", ipa: "/ˈjuːʒuəl/", zh: "通常的", ex: "As usual, he was late.", band: "4" },
+          { en: "often", ipa: "/ˈɒfn/", zh: "经常", ex: "I often walk.", band: "4" },
+          { en: "always", ipa: "/ˈɔːlweɪz/", zh: "总是", ex: "She always smiles.", band: "4" },
+          { en: "never", ipa: "/ˈnevə/", zh: "从不", ex: "I never smoke.", band: "4" },
+          { en: "sometimes", ipa: "/ˈsʌmtaɪmz/", zh: "有时", ex: "I sometimes cook.", band: "4" },
+          { en: "before", ipa: "/bɪˈfɔː/", zh: "在…之前", ex: "Wash hands before eating.", band: "4" },
+          { en: "after", ipa: "/ˈɑːftə/", zh: "在…之后", ex: "Call me after class.", band: "4" },
+          { en: "during", ipa: "/ˈdjʊərɪŋ/", zh: "在…期间", ex: "During the holiday.", band: "4" },
+          { en: "because", ipa: "/bɪˈkɒz/", zh: "因为", ex: "I stayed because it rained.", band: "4" },
+          { en: "however", ipa: "/haʊˈevə/", zh: "然而", ex: "However, I disagree.", band: "5" },
+        ]
+      },
+      {
+        id: "u6", title: "Unit 6 · Band 5 常用核心", band: "Band 5",
         words: [
           { en: "advice", ipa: "/ədˈvaɪs/", zh: "建议（名词）", ex: "She gave me good advice.", band: "5" },
           { en: "benefit", ipa: "/ˈbenɪfɪt/", zh: "益处；受益", ex: "Exercise has many benefits.", band: "5" },
@@ -986,11 +1271,17 @@
           { en: "increase", ipa: "/ɪnˈkriːs/", zh: "增加", ex: "Prices increased last year.", band: "5" },
           { en: "provide", ipa: "/prəˈvaɪd/", zh: "提供", ex: "Schools provide education.", band: "5" },
           { en: "require", ipa: "/rɪˈkwaɪər/", zh: "需要；要求", ex: "The task requires care.", band: "5" },
-          { en: "support", ipa: "/səˈpɔːrt/", zh: "支持", ex: "Parents support their children.", band: "5" }
+          { en: "support", ipa: "/səˈpɔːrt/", zh: "支持", ex: "Parents support their children.", band: "5" },
+          { en: "describe", ipa: "/dɪˈskraɪb/", zh: "描述", ex: "Describe the chart.", band: "5" },
+          { en: "explain", ipa: "/ɪkˈspleɪn/", zh: "解释", ex: "Explain your answer.", band: "5" },
+          { en: "prepare", ipa: "/prɪˈpeə/", zh: "准备", ex: "Prepare for the exam.", band: "5" },
+          { en: "protect", ipa: "/prəˈtekt/", zh: "保护", ex: "Protect the environment.", band: "5" },
+          { en: "reduce", ipa: "/rɪˈdjuːs/", zh: "减少", ex: "Reduce waste.", band: "5" },
+          { en: "create", ipa: "/kriˈeɪt/", zh: "创造", ex: "Create new ideas.", band: "5" },
         ]
       },
       {
-        id: "u3", title: "Unit 3 · Band 5.5 考试常见", band: "Band 5.5",
+        id: "u7", title: "Unit 7 · Band 5.5 考试常见", band: "Band 5.5",
         words: [
           { en: "achieve", ipa: "/əˈtʃiːv/", zh: "达到；实现", ex: "He achieved a high score.", band: "5.5" },
           { en: "affect", ipa: "/əˈfekt/", zh: "影响（动词）", ex: "Stress can affect health.", band: "5.5" },
@@ -1001,11 +1292,17 @@
           { en: "experience", ipa: "/ɪkˈspɪriəns/", zh: "经历；经验", ex: "Travel is a great experience.", band: "5.5" },
           { en: "opportunity", ipa: "/ˌɑːpərˈtuːnəti/", zh: "机会", ex: "Study abroad is an opportunity.", band: "5.5" },
           { en: "prefer", ipa: "/prɪˈfɜːr/", zh: "更喜欢", ex: "I prefer reading to TV.", band: "5.5" },
-          { en: "suggest", ipa: "/səˈdʒest/", zh: "建议；表明", ex: "Experts suggest more rest.", band: "5.5" }
+          { en: "suggest", ipa: "/səˈdʒest/", zh: "建议；表明", ex: "Experts suggest more rest.", band: "5.5" },
+          { en: "advantage", ipa: "/ədˈvɑːntɪdʒ/", zh: "优势", ex: "List the advantages.", band: "5.5" },
+          { en: "disadvantage", ipa: "/ˌdɪsədˈvɑːntɪdʒ/", zh: "缺点", ex: "Every plan has disadvantages.", band: "5.5" },
+          { en: "opinion", ipa: "/əˈpɪnjən/", zh: "观点", ex: "In my opinion.", band: "5.5" },
+          { en: "example", ipa: "/ɪɡˈzɑːmpl/", zh: "例子", ex: "Give an example.", band: "5.5" },
+          { en: "reason", ipa: "/ˈriːzn/", zh: "理由", ex: "State your reasons.", band: "5.5" },
+          { en: "solution", ipa: "/səˈluːʃn/", zh: "解决办法", ex: "Find a solution.", band: "5.5" },
         ]
       },
       {
-        id: "u4", title: "Unit 4 · Band 6 学术入门", band: "Band 6",
+        id: "u8", title: "Unit 8 · Band 6 学术入门", band: "Band 6",
         words: [
           { en: "analyse", ipa: "/ˈænəlaɪz/", zh: "分析", ex: "Analyse the data carefully.", band: "6" },
           { en: "assume", ipa: "/əˈsuːm/", zh: "假设；认为", ex: "Don't assume the answer.", band: "6" },
@@ -1016,11 +1313,38 @@
           { en: "factor", ipa: "/ˈfæktər/", zh: "因素", ex: "Cost is an important factor.", band: "6" },
           { en: "indicate", ipa: "/ˈɪndɪkeɪt/", zh: "表明；指示", ex: "Figures indicate growth.", band: "6" },
           { en: "method", ipa: "/ˈmeθəd/", zh: "方法", ex: "This method works well.", band: "6" },
-          { en: "significant", ipa: "/sɪɡˈnɪfɪkənt/", zh: "显著的；重要的", ex: "A significant change.", band: "6" }
+          { en: "significant", ipa: "/sɪɡˈnɪfɪkənt/", zh: "显著的；重要的", ex: "A significant change.", band: "6" },
+          { en: "argument", ipa: "/ˈɑːɡjumənt/", zh: "论点；争论", ex: "Support your argument.", band: "6" },
+          { en: "data", ipa: "/ˈdeɪtə/", zh: "数据", ex: "The data shows growth.", band: "6" },
+          { en: "issue", ipa: "/ˈɪʃuː/", zh: "问题；议题", ex: "This is a global issue.", band: "6" },
+          { en: "period", ipa: "/ˈpɪəriəd/", zh: "时期", ex: "During this period.", band: "6" },
+          { en: "source", ipa: "/sɔːs/", zh: "来源", ex: "Check the source.", band: "6" },
+          { en: "summary", ipa: "/ˈsʌməri/", zh: "摘要", ex: "Write a summary.", band: "6" },
         ]
       },
       {
-        id: "u5", title: "Unit 5 · Band 6.5 学术核心", band: "Band 6.5",
+        id: "u9", title: "Unit 9 · Band 6 写作常用", band: "Band 6",
+        words: [
+          { en: "although", ipa: "/ɔːlˈðəʊ/", zh: "虽然", ex: "Although it rained, we left.", band: "6" },
+          { en: "therefore", ipa: "/ˈðeəfɔː/", zh: "因此", ex: "Therefore, we must act.", band: "6" },
+          { en: "moreover", ipa: "/mɔːrˈəʊvə/", zh: "此外", ex: "Moreover, costs rose.", band: "6" },
+          { en: "furthermore", ipa: "/ˌfɜːðəˈmɔː/", zh: "而且", ex: "Furthermore, quality improved.", band: "6" },
+          { en: "whereas", ipa: "/ˌweərˈæz/", zh: "然而；而", ex: "City life is busy, whereas village life is quiet.", band: "6" },
+          { en: "despite", ipa: "/dɪˈspaɪt/", zh: "尽管", ex: "Despite the rain, we went.", band: "6" },
+          { en: "overall", ipa: "/ˌəʊvərˈɔːl/", zh: "总体而言", ex: "Overall, sales increased.", band: "6" },
+          { en: "mainly", ipa: "/ˈmeɪnli/", zh: "主要地", ex: "It is mainly used for study.", band: "6" },
+          { en: "especially", ipa: "/ɪˈspeʃəli/", zh: "尤其", ex: "Especially for beginners.", band: "6" },
+          { en: "generally", ipa: "/ˈdʒenrəli/", zh: "通常；大体上", ex: "Generally, people agree.", band: "6" },
+          { en: "approximately", ipa: "/əˈprɒksɪmətli/", zh: "大约", ex: "Approximately 50 students.", band: "6" },
+          { en: "gradually", ipa: "/ˈɡrædʒuəli/", zh: "逐渐地", ex: "Prices rose gradually.", band: "6" },
+          { en: "rapidly", ipa: "/ˈræpɪdli/", zh: "迅速地", ex: "Cities grow rapidly.", band: "6" },
+          { en: "slightly", ipa: "/ˈslaɪtli/", zh: "略微", ex: "It fell slightly.", band: "6" },
+          { en: "significantly", ipa: "/sɪɡˈnɪfɪkəntli/", zh: "显著地", ex: "It rose significantly.", band: "6" },
+          { en: "relatively", ipa: "/ˈrelətɪvli/", zh: "相对地", ex: "It is relatively cheap.", band: "6" },
+        ]
+      },
+      {
+        id: "u10", title: "Unit 10 · Band 6.5 学术核心", band: "Band 6.5",
         words: [
           { en: "assess", ipa: "/əˈses/", zh: "评估", ex: "Teachers assess students.", band: "6.5" },
           { en: "concept", ipa: "/ˈkɑːnsept/", zh: "概念", ex: "This is a key concept.", band: "6.5" },
@@ -1031,11 +1355,17 @@
           { en: "impact", ipa: "/ˈɪmpækt/", zh: "影响；冲击", ex: "Technology has a huge impact.", band: "6.5" },
           { en: "process", ipa: "/ˈprɑːses/", zh: "过程；处理", ex: "Describe the process.", band: "6.5" },
           { en: "research", ipa: "/rɪˈsɜːrtʃ/", zh: "研究", ex: "Recent research shows...", band: "6.5" },
-          { en: "theory", ipa: "/ˈθɪri/", zh: "理论", ex: "This theory explains the data.", band: "6.5" }
+          { en: "theory", ipa: "/ˈθɪri/", zh: "理论", ex: "This theory explains the data.", band: "6.5" },
+          { en: "feature", ipa: "/ˈfiːtʃə/", zh: "特征", ex: "A key feature of the plan.", band: "6.5" },
+          { en: "function", ipa: "/ˈfʌŋkʃn/", zh: "功能；作用", ex: "Describe the function.", band: "6.5" },
+          { en: "range", ipa: "/reɪndʒ/", zh: "范围", ex: "A wide range of choices.", band: "6.5" },
+          { en: "role", ipa: "/rəʊl/", zh: "角色；作用", ex: "Play an important role.", band: "6.5" },
+          { en: "structure", ipa: "/ˈstrʌktʃə/", zh: "结构", ex: "Check the essay structure.", band: "6.5" },
+          { en: "system", ipa: "/ˈsɪstəm/", zh: "系统", ex: "A public transport system.", band: "6.5" },
         ]
       },
       {
-        id: "u6", title: "Unit 6 · Band 7 写作高频", band: "Band 7",
+        id: "u11", title: "Unit 11 · Band 7 写作高频", band: "Band 7",
         words: [
           { en: "consequence", ipa: "/ˈkɑːnsɪkwəns/", zh: "后果；结果", ex: "Pollution has serious consequences.", band: "7" },
           { en: "contemporary", ipa: "/kənˈtempəreri/", zh: "当代的", ex: "Contemporary society faces stress.", band: "7" },
@@ -1046,11 +1376,38 @@
           { en: "maintain", ipa: "/meɪnˈteɪn/", zh: "维持；主张", ex: "Maintain a healthy lifestyle.", band: "7" },
           { en: "perspective", ipa: "/pərˈspektɪv/", zh: "视角；观点", ex: "From a global perspective.", band: "7" },
           { en: "relevant", ipa: "/ˈreləvənt/", zh: "相关的", ex: "Give relevant examples.", band: "7" },
-          { en: "trend", ipa: "/trend/", zh: "趋势", ex: "This is a long-term trend.", band: "7" }
+          { en: "trend", ipa: "/trend/", zh: "趋势", ex: "This is a long-term trend.", band: "7" },
+          { en: "essential", ipa: "/ɪˈsenʃl/", zh: "必要的", ex: "Water is essential.", band: "7" },
+          { en: "efficiency", ipa: "/ɪˈfɪʃnsi/", zh: "效率", ex: "Improve energy efficiency.", band: "7" },
+          { en: "infrastructure", ipa: "/ˈɪnfrəstrʌktʃə/", zh: "基础设施", ex: "Invest in infrastructure.", band: "7" },
+          { en: "innovation", ipa: "/ˌɪnəˈveɪʃn/", zh: "创新", ex: "Innovation drives growth.", band: "7" },
+          { en: "sustainable", ipa: "/səˈsteɪnəbl/", zh: "可持续的", ex: "Sustainable development.", band: "7" },
+          { en: "urban", ipa: "/ˈɜːbən/", zh: "城市的", ex: "Urban areas are crowded.", band: "7" },
         ]
       },
       {
-        id: "u7", title: "Unit 7 · Band 7.5 进阶学术", band: "Band 7.5",
+        id: "u12", title: "Unit 12 · Band 7 进阶表达", band: "Band 7",
+        words: [
+          { en: "acknowledge", ipa: "/əkˈnɒlɪdʒ/", zh: "承认", ex: "Acknowledge the problem.", band: "7" },
+          { en: "appropriate", ipa: "/əˈprəʊpriət/", zh: "合适的", ex: "Choose an appropriate example.", band: "7" },
+          { en: "commitment", ipa: "/kəˈmɪtmənt/", zh: "承诺；投入", ex: "Show commitment to study.", band: "7" },
+          { en: "consistent", ipa: "/kənˈsɪstənt/", zh: "一致的；持续的", ex: "Be consistent in practice.", band: "7" },
+          { en: "demonstrate", ipa: "/ˈdemənstreɪt/", zh: "证明；展示", ex: "Demonstrate your skills.", band: "7" },
+          { en: "distinguish", ipa: "/dɪˈstɪŋɡwɪʃ/", zh: "区分", ex: "Distinguish fact from opinion.", band: "7" },
+          { en: "emerge", ipa: "/ɪˈmɜːdʒ/", zh: "出现", ex: "New trends emerge.", band: "7" },
+          { en: "flexible", ipa: "/ˈfleksəbl/", zh: "灵活的", ex: "Keep a flexible schedule.", band: "7" },
+          { en: "generate", ipa: "/ˈdʒenəreɪt/", zh: "产生", ex: "Solar panels generate power.", band: "7" },
+          { en: "highlight", ipa: "/ˈhaɪlaɪt/", zh: "突出；强调", ex: "Highlight the main point.", band: "7" },
+          { en: "justify", ipa: "/ˈdʒʌstɪfaɪ/", zh: "证明…正当", ex: "Justify your opinion.", band: "7" },
+          { en: "objective", ipa: "/əbˈdʒektɪv/", zh: "目标；客观的", ex: "Set a clear objective.", band: "7" },
+          { en: "occupy", ipa: "/ˈɒkjupaɪ/", zh: "占用；占据", ex: "Work occupies her time.", band: "7" },
+          { en: "option", ipa: "/ˈɒpʃn/", zh: "选择", ex: "Consider every option.", band: "7" },
+          { en: "precise", ipa: "/prɪˈsaɪs/", zh: "精确的", ex: "Be precise in charts.", band: "7" },
+          { en: "rely", ipa: "/rɪˈlaɪ/", zh: "依赖", ex: "Do not rely on luck.", band: "7" },
+        ]
+      },
+      {
+        id: "u13", title: "Unit 13 · Band 7.5 进阶学术", band: "Band 7.5",
         words: [
           { en: "allocate", ipa: "/ˈæləkeɪt/", zh: "分配", ex: "Allocate resources wisely.", band: "7.5" },
           { en: "compensate", ipa: "/ˈkɑːmpenseɪt/", zh: "补偿；弥补", ex: "Nothing can compensate for lost time.", band: "7.5" },
@@ -1061,11 +1418,17 @@
           { en: "integrate", ipa: "/ˈɪntɪɡreɪt/", zh: "整合；融入", ex: "Integrate skills into study.", band: "7.5" },
           { en: "predominant", ipa: "/prɪˈdɑːmɪnənt/", zh: "占主导的", ex: "English is predominant online.", band: "7.5" },
           { en: "stimulate", ipa: "/ˈstɪmjuleɪt/", zh: "刺激；促进", ex: "Questions stimulate thinking.", band: "7.5" },
-          { en: "undermine", ipa: "/ˌʌndərˈmaɪn/", zh: "削弱；损害", ex: "Fake news undermines trust.", band: "7.5" }
+          { en: "undermine", ipa: "/ˌʌndərˈmaɪn/", zh: "削弱；损害", ex: "Fake news undermines trust.", band: "7.5" },
+          { en: "accelerate", ipa: "/əkˈseləreɪt/", zh: "加速", ex: "Growth may accelerate.", band: "7.5" },
+          { en: "comprise", ipa: "/kəmˈpraɪz/", zh: "包含；构成", ex: "The team comprises five people.", band: "7.5" },
+          { en: "derive", ipa: "/dɪˈraɪv/", zh: "源自；获得", ex: "Pleasure derives from effort.", band: "7.5" },
+          { en: "enhance", ipa: "/ɪnˈhɑːns/", zh: "增强", ex: "Enhance your writing.", band: "7.5" },
+          { en: "facilitate", ipa: "/fəˈsɪlɪteɪt/", zh: "促进；使便利", ex: "Technology facilitates learning.", band: "7.5" },
+          { en: "inhibit", ipa: "/ɪnˈhɪbɪt/", zh: "抑制", ex: "Fear can inhibit progress.", band: "7.5" },
         ]
       },
       {
-        id: "u8", title: "Unit 8 · Band 8+ 高阶精选", band: "Band 8+",
+        id: "u14", title: "Unit 14 · Band 8 高阶", band: "Band 8",
         words: [
           { en: "alleviate", ipa: "/əˈliːvieɪt/", zh: "减轻；缓解", ex: "Policies can alleviate poverty.", band: "8+" },
           { en: "ambiguous", ipa: "/æmˈbɪɡjuəs/", zh: "模棱两可的", ex: "The statement is ambiguous.", band: "8+" },
@@ -1076,11 +1439,37 @@
           { en: "plausible", ipa: "/ˈplɔːzəbl/", zh: "貌似合理的", ex: "A plausible explanation.", band: "8+" },
           { en: "proponent", ipa: "/prəˈpoʊnənt/", zh: "支持者；提倡者", ex: "Proponents of online learning.", band: "8+" },
           { en: "scrutinise", ipa: "/ˈskruːtənaɪz/", zh: "仔细检查", ex: "Scrutinise the evidence.", band: "8+" },
-          { en: "unprecedented", ipa: "/ʌnˈpresɪdentɪd/", zh: "史无前例的", ex: "An unprecedented challenge.", band: "8+" }
+          { en: "unprecedented", ipa: "/ʌnˈpresɪdentɪd/", zh: "史无前例的", ex: "An unprecedented challenge.", band: "8+" },
+          { en: "adverse", ipa: "/ˈædvɜːs/", zh: "不利的", ex: "Adverse effects of pollution.", band: "8" },
+          { en: "assert", ipa: "/əˈsɜːt/", zh: "断言；主张", ex: "Critics assert that...", band: "8" },
+          { en: "attain", ipa: "/əˈteɪn/", zh: "获得；达到", ex: "Attain a high score.", band: "8" },
+          { en: "deter", ipa: "/dɪˈtɜː/", zh: "威慑；阻止", ex: "High fees may deter students.", band: "8" },
+          { en: "eligible", ipa: "/ˈelɪdʒəbl/", zh: "有资格的", ex: "You are eligible to apply.", band: "8" },
+          { en: "implicit", ipa: "/ɪmˈplɪsɪt/", zh: "含蓄的；暗含的", ex: "An implicit message.", band: "8" },
         ]
-      }
+      },
+      {
+        id: "u15", title: "Unit 15 · Band 8+ 精选难词", band: "Band 8+",
+        words: [
+          { en: "ubiquitous", ipa: "/juːˈbɪkwɪtəs/", zh: "无处不在的", ex: "Smartphones are ubiquitous.", band: "8+" },
+          { en: "pragmatic", ipa: "/præɡˈmætɪk/", zh: "务实的", ex: "A pragmatic solution.", band: "8+" },
+          { en: "mitigate", ipa: "/ˈmɪtɪɡeɪt/", zh: "减轻；缓解", ex: "Policies can mitigate risks.", band: "8+" },
+          { en: "proliferation", ipa: "/prəˌlɪfəˈreɪʃn/", zh: "激增；扩散", ex: "The proliferation of apps.", band: "8+" },
+          { en: "resilient", ipa: "/rɪˈzɪliənt/", zh: "有韧性的", ex: "A resilient economy.", band: "8+" },
+          { en: "stringent", ipa: "/ˈstrɪndʒənt/", zh: "严格的", ex: "Stringent safety rules.", band: "8+" },
+          { en: "substantial", ipa: "/səbˈstænʃl/", zh: "大量的；实质的", ex: "A substantial increase.", band: "8+" },
+          { en: "tentative", ipa: "/ˈtentətɪv/", zh: "试探性的", ex: "A tentative conclusion.", band: "8+" },
+          { en: "viable", ipa: "/ˈvaɪəbl/", zh: "可行的", ex: "A viable alternative.", band: "8+" },
+          { en: "volatile", ipa: "/ˈvɒlətaɪl/", zh: "不稳定的", ex: "A volatile market.", band: "8+" },
+          { en: "widespread", ipa: "/ˈwaɪdspred/", zh: "广泛的", ex: "Widespread concern.", band: "8+" },
+          { en: "underscore", ipa: "/ˌʌndəˈskɔː/", zh: "强调", ex: "These results underscore the need.", band: "8+" },
+          { en: "paramount", ipa: "/ˈpærəmaʊnt/", zh: "最重要的", ex: "Safety is paramount.", band: "8+" },
+          { en: "paradox", ipa: "/ˈpærədɒks/", zh: "悖论", ex: "It is a paradox.", band: "8+" },
+          { en: "nuance", ipa: "/ˈnjuːɑːns/", zh: "细微差别", ex: "Understand the nuance.", band: "8+" },
+          { en: "catalyst", ipa: "/ˈkætəlɪst/", zh: "催化剂；诱因", ex: "A catalyst for change.", band: "8+" },
+        ]
+      },
     ];
-
 
     function currentTrack() {
       return state.track === "cet" ? "cet" : "ielts";
@@ -1097,7 +1486,7 @@
     function applyBrand() {
       const cet = currentTrack() === "cet";
       document.getElementById("brandTitle").textContent = cet ? "四六级单词" : "雅思单词";
-      document.getElementById("brandSub").textContent = cet ? "CET-4 / CET-6 · 每日打卡" : "Band 4→8+ · 每日打卡";
+      document.getElementById("brandSub").textContent = cet ? "从最简单开始 · CET 由易到难" : "从最简单开始 · 雅思由易到难";
       document.title = cet ? "四六级单词闪卡" : "雅思单词闪卡";
       document.querySelectorAll("#trackSwitch button").forEach((b) => {
         b.classList.toggle("active", b.dataset.track === currentTrack());
@@ -1108,8 +1497,8 @@
       if (unitsDesc) {
         const n = allWords().length;
         unitsDesc.innerHTML = cet
-          ? `从 CET-4 基础到 CET-6 高阶，建议按顺序学。共 <span id="totalWords">${n}</span> 词。`
-          : `从 Band 4 到 Band 8+，建议按顺序学。共 <span id="totalWords">${n}</span> 词。`;
+          ? `从最简单开始，由易到难（CET-4→CET-6）。建议按顺序学。共 <span id="totalWords">${n}</span> 词。`
+          : `从最简单开始，由易到难（Band 3→8+）。建议按顺序学。共 <span id="totalWords">${n}</span> 词。`;
       }
     }
 
@@ -1219,9 +1608,30 @@
     // Daily mix: slightly prefer earlier (easier) units, but include some harder ones
     function dailyWords(date) {
       const units = getUnits();
+      const bucket = trackCheckins();
+      const checkinCount = Object.keys(bucket || {}).length;
+      const streak = (state.streakByTrack && state.streakByTrack[currentTrack()]) || 0;
+      // Beginners: few check-ins / low streak → almost only Unit 1–2
+      const beginner = checkinCount < 3 && streak < 3;
+      const early = checkinCount < 7 && streak < 7;
       const weighted = [];
       units.forEach((u, ui) => {
-        const weight = Math.max(1, units.length - ui);
+        let weight;
+        if (beginner) {
+          if (ui === 0) weight = 40;
+          else if (ui === 1) weight = 22;
+          else if (ui === 2) weight = 6;
+          else if (ui < 5) weight = 2;
+          else weight = 1;
+        } else if (early) {
+          // Still heavily prefer early units
+          weight = Math.max(1, Math.round(Math.pow(Math.max(1, units.length - ui), 1.7)));
+          if (ui === 0) weight = Math.max(weight, 18);
+          if (ui === 1) weight = Math.max(weight, 12);
+        } else {
+          // Long-term: easy units still dominate, hard appear sparingly
+          weight = Math.max(1, Math.round(Math.pow(Math.max(1, units.length - ui), 1.35)));
+        }
         u.words.forEach((w) => {
           for (let i = 0; i < weight; i++) {
             weighted.push({ ...w, unitId: u.id, unitTitle: u.title, track: currentTrack() });
@@ -1230,7 +1640,7 @@
       });
       const picked = [];
       const seen = new Set();
-      for (const w of seededShuffle(weighted, hashSeed(date + "-" + currentTrack()))) {
+      for (const w of seededShuffle(weighted, hashSeed(date + "-" + currentTrack() + "-v2"))) {
         if (seen.has(w.en)) continue;
         seen.add(w.en);
         picked.push(w);
@@ -1450,8 +1860,8 @@
       const cet = currentTrack() === "cet";
       document.getElementById("homeTitle").textContent = checked ? "今日已打卡" : "今日 10 词";
       document.getElementById("homeDesc").textContent = checked
-        ? `已完成。${trackLabel()}词库 ${wordsN} 词 / ${unitsN} 单元；错题本 ${wrongN} 个。`
-        : `每日 10 词（偏易混难）。当前：${trackLabel()} · ${cet ? "CET-4→CET-6" : "Band 4→8+"}。`;
+        ? `已完成。${trackLabel()}词库 ${wordsN} 词 / ${unitsN} 单元；错题本 ${wrongN} 个。从最简单单元练起。`
+        : `从最简单开始，由易到难。每日 10 词（新手更偏 Unit 1–2）。当前：${trackLabel()}。`;
       document.getElementById("startBtn").textContent = checked ? "再练今日词表" : "开始今日学习";
       document.getElementById("reviewWrongBtn").style.display = wrongN ? "block" : "none";
     }
