@@ -3,181 +3,586 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1220" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="description" content="IELTS 单词闪卡 · 由易到难每日练习" />
   <title>IELTS 单词闪卡</title>
   <style>
     :root {
-      --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --muted: #94a3b8;
-      --ok: #22c55e; --bad: #ef4444; --accent: #38bdf8; --line: #334155;
+      --bg0: #070b14;
+      --bg1: #0f172a;
+      --card: rgba(30, 41, 59, 0.88);
+      --card-solid: #1e293b;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --muted2: #64748b;
+      --ok: #22c55e;
+      --ok-dim: rgba(34, 197, 94, 0.18);
+      --bad: #f43f5e;
+      --bad-dim: rgba(244, 63, 94, 0.18);
+      --accent: #38bdf8;
+      --accent2: #818cf8;
+      --accent-soft: rgba(56, 189, 248, 0.14);
+      --line: rgba(148, 163, 184, 0.16);
+      --glow: rgba(99, 102, 241, 0.22);
+      --shadow: 0 18px 48px rgba(0, 0, 0, 0.38);
+      --radius: 18px;
+      --shell: 440px;
+      --safe-b: env(safe-area-inset-bottom, 0px);
+      --safe-t: env(safe-area-inset-top, 0px);
     }
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; }
     body {
-      margin: 0; min-height: 100dvh;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: var(--bg); color: var(--text);
-      display: flex; flex-direction: column;
-      padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom));
+      margin: 0;
+      min-height: 100dvh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(99, 102, 241, 0.28), transparent 55%),
+        radial-gradient(900px 500px at 100% 0%, rgba(56, 189, 248, 0.18), transparent 50%),
+        radial-gradient(700px 400px at 50% 110%, rgba(14, 165, 233, 0.12), transparent 45%),
+        linear-gradient(180deg, var(--bg0), var(--bg1) 45%, #0b1324);
+      display: flex;
+      justify-content: center;
+      padding: max(12px, var(--safe-t)) 14px max(14px, var(--safe-b));
     }
-    header { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 10px; font-size: 14px; color: var(--muted); }
-    header .left { display: flex; flex-direction: column; gap: 4px; }
-    #dateLabel { color: var(--accent); font-weight: 600; }
-    #progress { font-variant-numeric: tabular-nums; white-space: nowrap; }
-    .streak {
-      background: #12263f; border: 1px solid var(--line); border-radius: 12px;
-      padding: 10px 12px; margin-bottom: 12px; display: flex; justify-content: space-between;
-      font-size: 13px; color: var(--muted);
+    .app {
+      width: 100%;
+      max-width: var(--shell);
+      min-height: calc(100dvh - max(12px, var(--safe-t)) - max(14px, var(--safe-b)));
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
-    .streak strong { color: var(--text); }
-    .tabs { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .brand .title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      color: var(--text);
+    }
+    .brand .sub {
+      font-size: 12px;
+      color: var(--muted);
+    }
+    #dateLabel {
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 12px;
+      margin-top: 2px;
+    }
+    #progress {
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      background: rgba(15, 23, 42, 0.55);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 10px;
+      align-self: flex-start;
+    }
+    .progress-track {
+      display: none;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.16);
+      overflow: hidden;
+      margin-top: -4px;
+    }
+    .progress-track.on { display: block; }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent2), var(--accent));
+      transition: width 0.28s ease;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+    .stat {
+      background: rgba(15, 23, 42, 0.55);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px 10px 9px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+    .stat .n {
+      display: block;
+      font-size: 18px;
+      font-weight: 750;
+      font-variant-numeric: tabular-nums;
+      color: var(--text);
+      line-height: 1.2;
+    }
+    .stat .l {
+      display: block;
+      margin-top: 3px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .stat.ok .n { color: #4ade80; }
+    .stat.warn .n { color: #fbbf24; }
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 4px;
+      padding: 4px;
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+    }
     .tabs button {
-      background: #12263f; color: var(--muted); border: 1px solid var(--line);
-      border-radius: 12px; padding: 10px 8px; font-size: 14px; font-weight: 600;
+      appearance: none;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      border-radius: 11px;
+      padding: 10px 8px;
+      min-height: 42px;
+      font-size: 13px;
+      font-weight: 650;
+      cursor: pointer;
+      transition: background .2s ease, color .2s ease, transform .12s ease;
     }
-    .tabs button.active { color: #0f172a; background: var(--accent); border-color: var(--accent); }
-    .stage {
-      flex: 1; min-height: 180px; display: flex; align-items: center; justify-content: center;
-      perspective: 1000px; overflow: hidden; position: relative; z-index: 1;
+    .tabs button.active {
+      color: #0b1220;
+      background: linear-gradient(135deg, #7dd3fc, #a5b4fc);
+      box-shadow: 0 6px 16px rgba(56, 189, 248, 0.25);
     }
-    .card {
-      width: min(100%, 420px); height: min(40dvh, 260px); position: relative; cursor: pointer;
-      transform-style: preserve-3d; transition: transform .45s ease; z-index: 1;
+    .tabs button:active { transform: scale(0.98); }
+    .panel {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+      min-height: 0;
     }
-    .card.flipped { transform: rotateY(180deg); }
-    .face {
-      position: absolute; inset: 0; backface-visibility: hidden; border-radius: 20px;
-      background: var(--card); border: 1px solid var(--line); display: flex; flex-direction: column;
-      align-items: center; justify-content: center; padding: 24px; text-align: center;
-      box-shadow: 0 12px 40px rgba(0,0,0,.35);
+    .panel h2 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 750;
+      letter-spacing: -0.02em;
     }
-    .face.back { transform: rotateY(180deg); }
-    .word { font-size: clamp(28px, 7vw, 44px); font-weight: 700; }
-    .hint { margin-top: 12px; font-size: 14px; color: var(--muted); }
-    .phonetic { margin-top: 8px; color: var(--accent); font-size: 17px; }
-    .band { margin-top: 8px; font-size: 12px; color: #fbbf24; }
-    .meaning { font-size: clamp(20px, 5vw, 30px); font-weight: 600; line-height: 1.35; }
-    .example { margin-top: 14px; font-size: 15px; color: var(--muted); line-height: 1.45; }
-    .actions {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px;
-      position: relative; z-index: 20; flex-shrink: 0;
+    .panel > p, .panel .lead {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 14px;
+    }
+    .home-hero {
+      background: linear-gradient(160deg, rgba(99,102,241,0.16), rgba(56,189,248,0.08) 55%, rgba(15,23,42,0.4));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px 16px 16px;
+      box-shadow: var(--shadow);
+    }
+    .home-hero h2 { margin-bottom: 6px; }
+    .home-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 4px;
     }
     button {
-      appearance: none; border: none; border-radius: 14px; padding: 16px 12px;
-      font-size: 16px; font-weight: 600; color: white; cursor: pointer;
-      touch-action: manipulation; -webkit-user-select: none; user-select: none;
-      position: relative; z-index: 21;
+      appearance: none;
+      border: none;
+      border-radius: 14px;
+      padding: 14px 14px;
+      min-height: 48px;
+      font-size: 15px;
+      font-weight: 650;
+      color: white;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-user-select: none;
+      user-select: none;
+      transition: transform .12s ease, opacity .15s ease, filter .15s ease;
     }
-    #btnKnow { background: var(--ok); }
-    #btnAgain { background: var(--bad); }
-    .tap { text-align: center; color: var(--muted); font-size: 13px; margin-top: 10px; }
-    .panel { display: none; flex-direction: column; gap: 12px; flex: 1; min-height: 0; }
-    .panel h2 { margin: 0; font-size: 22px; }
-    .panel p { margin: 0; color: var(--muted); line-height: 1.5; font-size: 14px; }
-    .unit-list { display: flex; flex-direction: column; gap: 8px; overflow: auto; }
+    button:active:not(:disabled) { transform: scale(0.98); }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    .primary {
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      color: #071018;
+      box-shadow: 0 10px 28px rgba(56, 189, 248, 0.28);
+    }
+    .secondary {
+      background: rgba(51, 65, 85, 0.75);
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+    .stage {
+      flex: 1;
+      min-height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 1200px;
+      overflow: visible;
+      position: relative;
+      z-index: 1;
+      padding: 4px 2px;
+    }
+    .card {
+      width: 100%;
+      height: min(46dvh, 300px);
+      min-height: 240px;
+      position: relative;
+      cursor: pointer;
+      transform-style: preserve-3d;
+      transition: transform .5s cubic-bezier(.2,.8,.2,1);
+      z-index: 1;
+    }
+    .card:active { transform: scale(0.985); }
+    .card.flipped { transform: rotateY(180deg); }
+    .card.flipped:active { transform: rotateY(180deg) scale(0.985); }
+    .face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 22px;
+      background:
+        linear-gradient(165deg, rgba(51,65,85,0.55), transparent 40%),
+        var(--card-solid);
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      box-shadow: var(--shadow), 0 0 0 1px rgba(99,102,241,0.08), 0 0 40px var(--glow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 22px;
+      text-align: center;
+    }
+    .face.back { transform: rotateY(180deg); }
+    .word {
+      font-size: clamp(32px, 8vw, 48px);
+      font-weight: 780;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+    }
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+      margin-top: 14px;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid var(--line);
+      background: rgba(15, 23, 42, 0.55);
+      color: var(--accent);
+    }
+    .chip.band {
+      color: #fbbf24;
+      background: rgba(251, 191, 36, 0.12);
+      border-color: rgba(251, 191, 36, 0.28);
+    }
+    .hint {
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--muted2);
+      letter-spacing: 0.02em;
+    }
+    .meaning {
+      font-size: clamp(22px, 5.5vw, 32px);
+      font-weight: 700;
+      line-height: 1.35;
+    }
+    .example {
+      margin-top: 14px;
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.5;
+      max-width: 28em;
+    }
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      position: relative;
+      z-index: 20;
+      flex-shrink: 0;
+    }
+    #btnAgain, #btnKnow {
+      min-height: 54px;
+      font-size: 16px;
+      border-radius: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    #btnKnow {
+      background: linear-gradient(180deg, #34d399, #16a34a);
+      box-shadow: 0 10px 24px rgba(34, 197, 94, 0.28);
+    }
+    #btnAgain {
+      background: linear-gradient(180deg, #fb7185, #e11d48);
+      box-shadow: 0 10px 24px rgba(244, 63, 94, 0.25);
+    }
+    .actions.locked #btnKnow,
+    .actions.locked #btnAgain {
+      opacity: 0.38;
+      filter: grayscale(0.25);
+      pointer-events: none;
+    }
+    .tap {
+      text-align: center;
+      color: var(--muted2);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+    .unit-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow: auto;
+      padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch;
+    }
     .unit {
-      background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px;
-      display: flex; justify-content: space-between; align-items: center; gap: 10px;
-      cursor: pointer; text-align: left; color: var(--text);
+      background: rgba(30, 41, 59, 0.78);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      text-align: left;
+      color: var(--text);
+      min-height: 72px;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.14);
+      transition: transform .12s ease, border-color .15s ease;
     }
-    .unit .meta { color: var(--muted); font-size: 12px; margin-top: 4px; }
+    .unit:active { transform: scale(0.985); }
+    .unit .meta {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 4px;
+    }
     .pill {
-      display: inline-block; margin-top: 6px; padding: 2px 8px; border-radius: 999px;
-      font-size: 11px; font-weight: 700; background: rgba(251,191,36,.15); color: #fbbf24;
+      display: inline-block;
+      margin-top: 8px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(251,191,36,.14);
+      color: #fbbf24;
+      border: 1px solid rgba(251,191,36,.25);
     }
     .unit .go {
-      background: #12263f; color: var(--accent); border: 1px solid var(--line);
-      border-radius: 999px; padding: 8px 12px; font-size: 13px; flex-shrink: 0;
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid rgba(56,189,248,0.28);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+      min-height: 36px;
+      display: inline-flex;
+      align-items: center;
     }
     .wrong-item {
-      background: var(--card); border: 1px solid var(--line); border-radius: 14px;
-      padding: 12px 14px; display: flex; justify-content: space-between; gap: 10px; align-items: center;
+      background: rgba(30, 41, 59, 0.78);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 13px 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.12);
     }
-    .wrong-item .en { font-weight: 700; }
+    .wrong-item .en { font-weight: 750; font-size: 16px; }
     .wrong-item .zh { color: var(--muted); font-size: 13px; margin-top: 4px; }
-    .wrong-item .count { color: #fca5a5; font-size: 12px; white-space: nowrap; }
-    .row-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .primary { background: var(--accent); color: #0f172a; }
-    .secondary { background: #334155; color: var(--text); }
-    .badge {
-      display: inline-block; padding: 4px 10px; border-radius: 999px;
-      background: rgba(34,197,94,.15); color: #4ade80; font-size: 13px; font-weight: 600; align-self: center;
+    .wrong-item .count {
+      color: #fda4af;
+      font-size: 12px;
+      white-space: nowrap;
+      background: var(--bad-dim);
+      border: 1px solid rgba(244,63,94,0.25);
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-weight: 650;
     }
-    .center { align-items: center; text-align: center; padding-top: 24px; }
-    .empty { color: var(--muted); text-align: center; padding: 28px 8px; }
+    .row-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--ok-dim);
+      color: #4ade80;
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid rgba(74, 222, 128, 0.28);
+    }
+    .center {
+      align-items: center;
+      text-align: center;
+      padding-top: 28px;
+      gap: 14px;
+    }
+    .center .done-card {
+      width: 100%;
+      background: linear-gradient(165deg, rgba(99,102,241,0.18), rgba(34,197,94,0.08) 60%, rgba(15,23,42,0.5));
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 28px 18px 22px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .done-emoji {
+      font-size: 36px;
+      line-height: 1;
+      filter: drop-shadow(0 8px 16px rgba(0,0,0,0.25));
+    }
+    .empty {
+      color: var(--muted);
+      text-align: center;
+      padding: 36px 12px;
+      border: 1px dashed var(--line);
+      border-radius: 16px;
+      background: rgba(15,23,42,0.35);
+    }
+    @media (min-width: 480px) {
+      body { padding-top: 24px; padding-bottom: 24px; }
+      .card { height: 300px; }
+    }
   </style>
 </head>
 <body>
-  <header>
-    <div class="left">
-      <span>IELTS 单词闪卡 · 由易到难</span>
-      <span id="dateLabel"></span>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="title">IELTS 单词闪卡</span>
+        <span class="sub">由易到难 · 每日打卡</span>
+        <span id="dateLabel"></span>
+      </div>
+      <span id="progress">—</span>
+    </header>
+
+    <div class="progress-track" id="progressTrack" aria-hidden="true">
+      <div class="progress-fill" id="progressFill"></div>
     </div>
-    <span id="progress">—</span>
-  </header>
 
-  <div class="streak">
-    <span>连续打卡 <strong id="streakCount">0</strong> 天</span>
-    <span id="checkStatus">今日未打卡</span>
-  </div>
-
-  <div class="tabs" id="tabs">
-    <button type="button" data-tab="home" class="active">今日</button>
-    <button type="button" data-tab="units">单元</button>
-    <button type="button" data-tab="wrong">错题本</button>
-  </div>
-
-  <div id="home" class="panel" style="display:flex">
-    <h2 id="homeTitle">今日 10 词</h2>
-    <p id="homeDesc"></p>
-    <button class="primary" id="startBtn" type="button">开始今日学习</button>
-    <button class="secondary" id="reviewWrongBtn" type="button">先刷错题本</button>
-  </div>
-
-  <div id="units" class="panel">
-    <h2>按雅思难度分单元</h2>
-    <p>从 Band 4 基础词到 Band 8+ 学术高频词，建议按顺序学。共 <span id="totalWords">0</span> 词。</p>
-    <div class="unit-list" id="unitList"></div>
-  </div>
-
-  <div id="wrong" class="panel">
-    <h2>错题本</h2>
-    <p id="wrongDesc">标记为「不认识」的词会进入这里。</p>
-    <div class="row-btns">
-      <button class="primary" id="practiceWrongBtn" type="button">练习错题</button>
-      <button class="secondary" id="clearWrongBtn" type="button">清空错题本</button>
-    </div>
-    <div class="unit-list" id="wrongList"></div>
-  </div>
-
-  <div id="study" class="panel">
-    <div class="stage">
-      <div class="card" id="card" role="button" aria-label="翻转卡片">
-        <div class="face front">
-          <div class="word" id="word"></div>
-          <div class="phonetic" id="phonetic"></div>
-          <div class="band" id="bandFront"></div>
-          <div class="hint">点卡片看释义</div>
-        </div>
-        <div class="face back">
-          <div class="meaning" id="meaning"></div>
-          <div class="example" id="example"></div>
-          <div class="band" id="bandBack"></div>
-          <div class="hint">再点一次可翻回</div>
-        </div>
+    <div class="stats" id="statsRow">
+      <div class="stat">
+        <span class="n" id="streakCount">0</span>
+        <span class="l">连续打卡</span>
+      </div>
+      <div class="stat" id="checkStat">
+        <span class="n" id="checkStatusShort">未打卡</span>
+        <span class="l">今日状态</span>
+      </div>
+      <div class="stat">
+        <span class="n" id="wrongCountStat">0</span>
+        <span class="l">错题本</span>
       </div>
     </div>
-    <div class="actions">
-      <button id="btnAgain" type="button" data-action="again">不认识</button>
-      <button id="btnKnow" type="button" data-action="know">认识</button>
-    </div>
-    <div class="tap">先点卡片翻面，再选认识 / 不认识</div>
-  </div>
 
-  <div id="done" class="panel center">
-    <span class="badge" id="doneBadge">完成</span>
-    <h2 id="doneTitle">本轮结束</h2>
-    <p id="summary"></p>
-    <button class="primary" id="restart" type="button">继续练错题</button>
-    <button class="secondary" id="backHome" type="button">回首页</button>
+    <div class="tabs" id="tabs">
+      <button type="button" data-tab="home" class="active">今日</button>
+      <button type="button" data-tab="units">单元</button>
+      <button type="button" data-tab="wrong">错题本</button>
+    </div>
+
+    <div id="home" class="panel" style="display:flex">
+      <div class="home-hero">
+        <h2 id="homeTitle">今日 10 词</h2>
+        <p id="homeDesc" class="lead"></p>
+      </div>
+      <div class="home-actions">
+        <button class="primary" id="startBtn" type="button">开始今日学习</button>
+        <button class="secondary" id="reviewWrongBtn" type="button">先刷错题本</button>
+      </div>
+    </div>
+
+    <div id="units" class="panel">
+      <h2>按雅思难度分单元</h2>
+      <p>从 Band 4 基础词到 Band 8+ 学术高频词，建议按顺序学。共 <span id="totalWords">0</span> 词。</p>
+      <div class="unit-list" id="unitList"></div>
+    </div>
+
+    <div id="wrong" class="panel">
+      <h2>错题本</h2>
+      <p id="wrongDesc">标记为「不认识」的词会进入这里。</p>
+      <div class="row-btns">
+        <button class="primary" id="practiceWrongBtn" type="button">练习错题</button>
+        <button class="secondary" id="clearWrongBtn" type="button">清空错题本</button>
+      </div>
+      <div class="unit-list" id="wrongList"></div>
+    </div>
+
+    <div id="study" class="panel">
+      <div class="stage">
+        <div class="card" id="card" role="button" aria-label="翻转卡片">
+          <div class="face front">
+            <div class="word" id="word"></div>
+            <div class="meta-row">
+              <span class="chip" id="phonetic"></span>
+              <span class="chip band" id="bandFront"></span>
+            </div>
+            <div class="hint">点卡片看释义</div>
+          </div>
+          <div class="face back">
+            <div class="meaning" id="meaning"></div>
+            <div class="example" id="example"></div>
+            <div class="meta-row" style="margin-top:14px">
+              <span class="chip band" id="bandBack"></span>
+            </div>
+            <div class="hint">再点一次可翻回</div>
+          </div>
+        </div>
+      </div>
+      <div class="actions locked" id="markActions">
+        <button id="btnAgain" type="button" data-action="again">✕ 不认识</button>
+        <button id="btnKnow" type="button" data-action="know">✓ 认识</button>
+      </div>
+      <div class="tap" id="tapHint">先点卡片翻面，再选认识 / 不认识</div>
+    </div>
+
+    <div id="done" class="panel center">
+      <div class="done-card">
+        <div class="done-emoji" aria-hidden="true">✨</div>
+        <span class="badge" id="doneBadge">完成</span>
+        <h2 id="doneTitle">本轮结束</h2>
+        <p id="summary"></p>
+      </div>
+      <button class="primary" id="restart" type="button">继续练错题</button>
+      <button class="secondary" id="backHome" type="button">回首页</button>
+    </div>
   </div>
 
   <script>
@@ -318,7 +723,11 @@
       study: document.getElementById("study"),
       done: document.getElementById("done"),
       progress: document.getElementById("progress"),
-      tabs: document.getElementById("tabs")
+      progressTrack: document.getElementById("progressTrack"),
+      progressFill: document.getElementById("progressFill"),
+      markActions: document.getElementById("markActions"),
+      tabs: document.getElementById("tabs"),
+      statsRow: document.getElementById("statsRow")
     };
 
     function todayKey() {
@@ -381,11 +790,25 @@
       delete state.wrongBook[en];
       saveState();
     }
+    function setProgressBar(on, ratio) {
+      els.progressTrack.classList.toggle("on", !!on);
+      els.progressFill.style.width = on ? `${Math.max(0, Math.min(1, ratio)) * 100}%` : "0%";
+    }
+    function setMarkLocked(locked) {
+      els.markActions.classList.toggle("locked", !!locked);
+      document.getElementById("tapHint").textContent = locked
+        ? "先点卡片翻面，再选认识 / 不认识"
+        : "已翻面 · 选择认识或不认识";
+    }
     function updateStreakUI(date) {
       const checked = !!(state.checkins && state.checkins[date]);
       document.getElementById("streakCount").textContent = state.streak || 0;
-      document.getElementById("checkStatus").textContent = checked ? "今日已打卡" : "今日未打卡";
-      document.getElementById("checkStatus").style.color = checked ? "#4ade80" : "";
+      const short = document.getElementById("checkStatusShort");
+      short.textContent = checked ? "已打卡" : "未打卡";
+      document.getElementById("checkStat").classList.toggle("ok", checked);
+      document.getElementById("checkStat").classList.toggle("warn", !checked);
+      document.getElementById("wrongCountStat").textContent = wrongList().length;
+      // keep a hidden compatibility node if referenced elsewhere — none; checkStatus removed from DOM intentionally replaced by short label
     }
     function markCheckin(date) {
       if (!state.checkins) state.checkins = {};
@@ -400,6 +823,8 @@
     function showTab(name) {
       ["home","units","wrong","study","done"].forEach(id => document.getElementById(id).style.display = "none");
       document.querySelectorAll(".tabs button").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
+      els.statsRow.style.display = (name === "study" || name === "done") ? "none" : "grid";
+      setProgressBar(false, 0);
       if (name === "home") renderHome();
       if (name === "units") renderUnits();
       if (name === "wrong") renderWrong();
@@ -443,7 +868,8 @@
       items.forEach((w) => {
         const row = document.createElement("div");
         row.className = "wrong-item";
-        row.innerHTML = `<div><div class="en">${w.en}</div><div class="zh">${w.zh}${w.band ? " · Band "+w.band : ""}</div></div><div class="count">错 ${w.misses||1} 次</div>`;
+        const band = w.band ? `<span class="pill" style="margin-top:6px">Band ${w.band}</span>` : "";
+        row.innerHTML = `<div><div class="en">${w.en}</div><div class="zh">${w.zh}</div>${band}</div><div class="count">错 ${w.misses||1} 次</div>`;
         list.appendChild(row);
       });
     }
@@ -452,6 +878,7 @@
       els.card.classList.remove("flipped");
       ["home","units","wrong","done"].forEach(id => document.getElementById(id).style.display = "none");
       document.querySelectorAll(".tabs button").forEach(b => b.classList.remove("active"));
+      els.statsRow.style.display = "none";
       els.study.style.display = "flex";
       document.getElementById("doneTitle").dataset.from = title || "";
       showCard();
@@ -459,6 +886,8 @@
     function showCard() {
       if (index >= queue.length) {
         els.study.style.display = "none"; els.done.style.display = "flex";
+        setProgressBar(false, 0);
+        setMarkLocked(true);
         const date = todayKey();
         if (mode === "daily") markCheckin(date);
         document.getElementById("doneBadge").textContent =
@@ -475,31 +904,42 @@
       }
       const w = queue[index];
       document.getElementById("word").textContent = w.en;
-      document.getElementById("phonetic").textContent = w.ipa;
+      document.getElementById("phonetic").textContent = w.ipa || "—";
+      document.getElementById("phonetic").style.display = w.ipa ? "" : "none";
       document.getElementById("meaning").textContent = w.zh;
       document.getElementById("example").textContent = w.ex;
-      const bandText = w.band ? `IELTS ≈ Band ${w.band}` : "";
+      const bandText = w.band ? `Band ${w.band}` : "";
       document.getElementById("bandFront").textContent = bandText;
       document.getElementById("bandBack").textContent = bandText;
+      document.getElementById("bandFront").style.display = bandText ? "" : "none";
+      document.getElementById("bandBack").style.display = bandText ? "" : "none";
       els.progress.textContent = `${index+1} / ${queue.length}`;
+      setProgressBar(true, (index) / queue.length);
       flipped = false; els.card.classList.remove("flipped");
+      setMarkLocked(true);
     }
     function flip() {
       if (index >= queue.length) return;
       flipped = !flipped; els.card.classList.toggle("flipped", flipped);
+      setMarkLocked(!flipped);
     }
     function mark(isKnown) {
       if (index >= queue.length) return;
+      if (!flipped) return;
       const w = queue[index];
       if (isKnown) { known += 1; removeWrong(w.en); }
       else { unknown.push(w); addWrong(w); }
-      index += 1; showCard();
+      index += 1;
+      // fill bar toward completed count
+      setProgressBar(true, Math.min(1, index / queue.length));
+      showCard();
     }
 
     window.__flip = flip;
     let markLock = false;
     function safeMark(isKnown) {
       if (markLock) return;
+      if (!flipped) return;
       markLock = true;
       try { mark(isKnown); } finally { setTimeout(() => { markLock = false; }, 180); }
     }
@@ -517,7 +957,7 @@
     document.getElementById("practiceWrongBtn").addEventListener("click", () => start(wrongList(), "wrong"));
     document.getElementById("clearWrongBtn").addEventListener("click", () => {
       if (!wrongList().length) return;
-      if (confirm("确定清空错题本？")) { state.wrongBook = {}; saveState(); renderWrong(); }
+      if (confirm("确定清空错题本？")) { state.wrongBook = {}; saveState(); renderWrong(); updateStreakUI(todayKey()); }
     });
     document.getElementById("restart").addEventListener("click", () => {
       const list = unknown.length ? unknown : wrongList();
