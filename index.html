@@ -4,10 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0b1220" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="description" content="四六级 / 雅思 单词闪卡 · 由易到难每日练习" />
-  <title>英语单词闪卡</title>
+  <meta name="apple-mobile-web-app-title" content="单词闪卡" />
+  <meta name="application-name" content="单词闪卡" />
+  <meta name="description" content="入门 / 四六级 / 雅思 单词闪卡 · 由易到难每日练习" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png" />
+  <title>单词闪卡</title>
   <style>
     :root {
       --bg0: #070b14;
@@ -681,6 +688,52 @@
     }
     .track-switch button:active { transform: scale(0.98); }
 
+
+    .install-banner {
+      display: none;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 12px 12px 14px;
+      background: linear-gradient(160deg, rgba(99,102,241,0.2), rgba(56,189,248,0.1));
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.14);
+    }
+    .install-banner.show { display: flex; }
+    .install-banner .ib-body { min-width: 0; flex: 1; }
+    .install-banner .ib-title {
+      font-size: 14px;
+      font-weight: 750;
+      color: var(--text);
+      margin: 0 0 4px;
+    }
+    .install-banner .ib-desc {
+      margin: 0;
+      font-size: 12px;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+    .install-banner .ib-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .install-banner .ib-actions button {
+      min-height: 36px;
+      padding: 8px 12px;
+      font-size: 12px;
+      border-radius: 999px;
+    }
+    .install-banner .ib-dismiss {
+      background: transparent;
+      color: var(--muted2);
+      border: 1px solid var(--line);
+      min-width: 36px;
+      padding: 6px 10px;
+    }
+
     .tts-hidden { display: none !important; }
   </style>
 </head>
@@ -718,6 +771,17 @@
       <button type="button" data-track="intro" class="active">入门</button>
       <button type="button" data-track="cet">四六级</button>
       <button type="button" data-track="ielts">雅思</button>
+    </div>
+
+    <div class="install-banner" id="installBanner" role="region" aria-label="安装到手机">
+      <div class="ib-body">
+        <p class="ib-title">安装到手机</p>
+        <p class="ib-desc" id="installHint">添加到主屏幕，离线也能刷词。</p>
+      </div>
+      <div class="ib-actions">
+        <button type="button" class="primary" id="installBtn" style="display:none">安装</button>
+        <button type="button" class="ib-dismiss" id="installDismiss" aria-label="关闭">关闭</button>
+      </div>
     </div>
 
     <div class="tabs" id="tabs">
@@ -2488,6 +2552,78 @@
     applyBrand();
     document.getElementById("dateLabel").textContent = formatDateCn(todayKey());
     showTab("home");
+
+    // ---- PWA install + service worker ----
+    (function setupPwa() {
+      const DISMISS_KEY = "flashcards-pwa-install-dismissed";
+      const banner = document.getElementById("installBanner");
+      const hint = document.getElementById("installHint");
+      const btn = document.getElementById("installBtn");
+      const dismiss = document.getElementById("installDismiss");
+      if (!banner) return;
+
+      const isStandalone = window.matchMedia("(display-mode: standalone)").matches
+        || window.navigator.standalone === true;
+      if (isStandalone) return;
+      if (localStorage.getItem(DISMISS_KEY) === "1") return;
+
+      const ua = navigator.userAgent || "";
+      const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+      const isAndroid = /Android/i.test(ua);
+
+      let deferredPrompt = null;
+
+      function showBanner() {
+        banner.classList.add("show");
+      }
+
+      if (isIOS) {
+        hint.textContent = "iPhone：用 Safari 打开 → 点底部分享 →「添加到主屏幕」。";
+        btn.style.display = "none";
+        showBanner();
+      } else {
+        hint.textContent = isAndroid
+          ? "可安装到主屏幕，像 App 一样打开（支持离线缓存）。"
+          : "可安装到桌面 / 主屏幕，支持离线刷词。";
+        window.addEventListener("beforeinstallprompt", (e) => {
+          e.preventDefault();
+          deferredPrompt = e;
+          btn.style.display = "block";
+          btn.textContent = "安装";
+          showBanner();
+        });
+        // Show soft tip even if prompt not yet available
+        setTimeout(() => {
+          if (!banner.classList.contains("show") && !localStorage.getItem(DISMISS_KEY)) {
+            if (!isIOS) {
+              hint.textContent = "Chrome 菜单里也可「安装应用」或「添加到主屏幕」。";
+              showBanner();
+            }
+          }
+        }, 1800);
+      }
+
+      btn.addEventListener("click", async () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        try { await deferredPrompt.userChoice; } catch (_) {}
+        deferredPrompt = null;
+        banner.classList.remove("show");
+        localStorage.setItem(DISMISS_KEY, "1");
+      });
+      dismiss.addEventListener("click", () => {
+        banner.classList.remove("show");
+        localStorage.setItem(DISMISS_KEY, "1");
+      });
+
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("./sw.js").catch((err) => {
+            console.warn("SW register failed", err);
+          });
+        });
+      }
+    })();
   </script>
 </body>
 </html>
