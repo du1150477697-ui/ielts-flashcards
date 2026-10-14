@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#0b1220" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="description" content="IELTS 单词闪卡 · 由易到难每日练习" />
-  <title>IELTS 单词闪卡</title>
+  <meta name="description" content="四六级 / 雅思 单词闪卡 · 由易到难每日练习" />
+  <title>英语单词闪卡</title>
   <style>
     :root {
       --bg0: #070b14;
@@ -650,6 +650,37 @@
       border-radius: 16px;
     }
 
+
+    .track-switch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      padding: 4px;
+      background: rgba(15, 23, 42, 0.72);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.14);
+    }
+    .track-switch button {
+      appearance: none;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      border-radius: 12px;
+      padding: 12px 8px;
+      min-height: 46px;
+      font-size: 15px;
+      font-weight: 750;
+      cursor: pointer;
+      transition: background .2s ease, color .2s ease, transform .12s ease, box-shadow .2s ease;
+    }
+    .track-switch button.active {
+      color: #071018;
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      box-shadow: 0 8px 20px rgba(56, 189, 248, 0.28);
+    }
+    .track-switch button:active { transform: scale(0.98); }
+
     .tts-hidden { display: none !important; }
   </style>
 </head>
@@ -657,8 +688,8 @@
   <div class="app">
     <header class="topbar">
       <div class="brand">
-        <span class="title">IELTS 单词闪卡</span>
-        <span class="sub">由易到难 · 每日打卡</span>
+        <span class="title" id="brandTitle">英语单词</span>
+        <span class="sub" id="brandSub">由易到难 · 每日打卡</span>
         <span id="dateLabel"></span>
       </div>
       <span id="progress">—</span>
@@ -681,6 +712,11 @@
         <span class="n" id="wrongCountStat">0</span>
         <span class="l">错题本</span>
       </div>
+    </div>
+
+    <div class="track-switch" id="trackSwitch" role="tablist" aria-label="考试类型">
+      <button type="button" data-track="cet" class="active">四六级</button>
+      <button type="button" data-track="ielts">雅思</button>
     </div>
 
     <div class="tabs" id="tabs">
@@ -707,8 +743,8 @@
     </div>
 
     <div id="units" class="panel">
-      <h2>按雅思难度分单元</h2>
-      <p>从 Band 4 基础词到 Band 8+ 学术高频词，建议按顺序学。共 <span id="totalWords">0</span> 词。</p>
+      <h2 id="unitsTitle">按难度分单元</h2>
+      <p id="unitsDesc">建议按顺序学。共 <span id="totalWords">0</span> 词。</p>
       <div class="unit-list" id="unitList"></div>
     </div>
 
@@ -798,7 +834,131 @@
     const STORAGE_KEY = "flashcards-ielts-v1";
 
     // Units ordered easy → hard by typical IELTS band / AWL academic difficulty
-    const UNITS = [
+
+    const CET_UNITS = [
+      {
+        id: "c1", title: "Unit 1 · CET-4 基础入门", band: "CET-4",
+        words: [
+          { en: "ability", ipa: "/əˈbɪləti/", zh: "能力", ex: "She has the ability to lead.", band: "CET4" },
+          { en: "accept", ipa: "/əkˈsept/", zh: "接受", ex: "I accept your advice.", band: "CET4" },
+          { en: "achieve", ipa: "/əˈtʃiːv/", zh: "达到；实现", ex: "He achieved his goal.", band: "CET4" },
+          { en: "advantage", ipa: "/ədˈvɑːntɪdʒ/", zh: "优势", ex: "This plan has clear advantages.", band: "CET4" },
+          { en: "advice", ipa: "/ədˈvaɪs/", zh: "建议", ex: "Follow the teacher's advice.", band: "CET4" },
+          { en: "afford", ipa: "/əˈfɔːd/", zh: "负担得起", ex: "We cannot afford a car.", band: "CET4" },
+          { en: "agree", ipa: "/əˈɡriː/", zh: "同意", ex: "Do you agree with me?", band: "CET4" },
+          { en: "allow", ipa: "/əˈlaʊ/", zh: "允许", ex: "Pets are not allowed here.", band: "CET4" },
+          { en: "appear", ipa: "/əˈpɪə/", zh: "出现；似乎", ex: "A rainbow appeared after rain.", band: "CET4" },
+          { en: "average", ipa: "/ˈævərɪdʒ/", zh: "平均的；普通的", ex: "His score is above average.", band: "CET4" }
+        ]
+      },
+      {
+        id: "c2", title: "Unit 2 · CET-4 校园生活", band: "CET-4",
+        words: [
+          { en: "attend", ipa: "/əˈtend/", zh: "参加；出席", ex: "Students attend classes daily.", band: "CET4" },
+          { en: "campus", ipa: "/ˈkæmpəs/", zh: "校园", ex: "The campus is beautiful.", band: "CET4" },
+          { en: "course", ipa: "/kɔːs/", zh: "课程", ex: "I take an English course.", band: "CET4" },
+          { en: "degree", ipa: "/dɪˈɡriː/", zh: "学位；程度", ex: "She got a bachelor's degree.", band: "CET4" },
+          { en: "library", ipa: "/ˈlaɪbrəri/", zh: "图书馆", ex: "He studies in the library.", band: "CET4" },
+          { en: "major", ipa: "/ˈmeɪdʒə/", zh: "主修；主要的", ex: "My major is economics.", band: "CET4" },
+          { en: "schedule", ipa: "/ˈʃedjuːl/", zh: "时间表", ex: "Check the exam schedule.", band: "CET4" },
+          { en: "semester", ipa: "/sɪˈmestə/", zh: "学期", ex: "This semester ends in June.", band: "CET4" },
+          { en: "subject", ipa: "/ˈsʌbdʒɪkt/", zh: "科目；主题", ex: "Math is my favorite subject.", band: "CET4" },
+          { en: "tuition", ipa: "/tjuˈɪʃn/", zh: "学费", ex: "Tuition fees are rising.", band: "CET4" }
+        ]
+      },
+      {
+        id: "c3", title: "Unit 3 · CET-4 日常社交", band: "CET-4",
+        words: [
+          { en: "attitude", ipa: "/ˈætɪtjuːd/", zh: "态度", ex: "A positive attitude helps.", band: "CET4" },
+          { en: "aware", ipa: "/əˈweə/", zh: "意识到的", ex: "She is aware of the risk.", band: "CET4" },
+          { en: "balance", ipa: "/ˈbæləns/", zh: "平衡", ex: "Keep a work-life balance.", band: "CET4" },
+          { en: "benefit", ipa: "/ˈbenɪfɪt/", zh: "益处；受益", ex: "Exercise benefits your health.", band: "CET4" },
+          { en: "challenge", ipa: "/ˈtʃælɪndʒ/", zh: "挑战", ex: "The task is a challenge.", band: "CET4" },
+          { en: "communicate", ipa: "/kəˈmjuːnɪkeɪt/", zh: "交流", ex: "We communicate by email.", band: "CET4" },
+          { en: "community", ipa: "/kəˈmjuːnəti/", zh: "社区；群体", ex: "Join the local community.", band: "CET4" },
+          { en: "confident", ipa: "/ˈkɒnfɪdənt/", zh: "自信的", ex: "He feels confident now.", band: "CET4" },
+          { en: "culture", ipa: "/ˈkʌltʃə/", zh: "文化", ex: "Language reflects culture.", band: "CET4" },
+          { en: "decision", ipa: "/dɪˈsɪʒn/", zh: "决定", ex: "It was a hard decision.", band: "CET4" }
+        ]
+      },
+      {
+        id: "c4", title: "Unit 4 · CET-4 考试高频", band: "CET-4",
+        words: [
+          { en: "available", ipa: "/əˈveɪləbl/", zh: "可获得的", ex: "Tickets are still available.", band: "CET4" },
+          { en: "avoid", ipa: "/əˈvɔɪd/", zh: "避免", ex: "Avoid making the same mistake.", band: "CET4" },
+          { en: "cause", ipa: "/kɔːz/", zh: "引起；原因", ex: "Stress can cause illness.", band: "CET4" },
+          { en: "compare", ipa: "/kəmˈpeə/", zh: "比较", ex: "Compare the two reports.", band: "CET4" },
+          { en: "consider", ipa: "/kənˈsɪdə/", zh: "考虑", ex: "Consider all the options.", band: "CET4" },
+          { en: "develop", ipa: "/dɪˈveləp/", zh: "发展；培养", ex: "Develop good study habits.", band: "CET4" },
+          { en: "effect", ipa: "/ɪˈfekt/", zh: "影响；效果", ex: "The effect was immediate.", band: "CET4" },
+          { en: "improve", ipa: "/ɪmˈpruːv/", zh: "提高；改进", ex: "Practice can improve skills.", band: "CET4" },
+          { en: "include", ipa: "/ɪnˈkluːd/", zh: "包括", ex: "The price includes tax.", band: "CET4" },
+          { en: "require", ipa: "/rɪˈkwaɪə/", zh: "需要；要求", ex: "The job requires experience.", band: "CET4" }
+        ]
+      },
+      {
+        id: "c5", title: "Unit 5 · CET-4 进阶常用", band: "CET-4",
+        words: [
+          { en: "atmosphere", ipa: "/ˈætməsfɪə/", zh: "大气；氛围", ex: "The atmosphere was friendly.", band: "CET4" },
+          { en: "conclude", ipa: "/kənˈkluːd/", zh: "得出结论", ex: "We conclude from the data.", band: "CET4" },
+          { en: "contribute", ipa: "/kənˈtrɪbjuːt/", zh: "贡献；促成", ex: "Everyone can contribute ideas.", band: "CET4" },
+          { en: "economy", ipa: "/ɪˈkɒnəmi/", zh: "经济", ex: "The economy is growing.", band: "CET4" },
+          { en: "environment", ipa: "/ɪnˈvaɪrənmənt/", zh: "环境", ex: "Protect the environment.", band: "CET4" },
+          { en: "evidence", ipa: "/ˈevɪdəns/", zh: "证据", ex: "There is strong evidence.", band: "CET4" },
+          { en: "factor", ipa: "/ˈfæktə/", zh: "因素", ex: "Cost is a key factor.", band: "CET4" },
+          { en: "focus", ipa: "/ˈfəʊkəs/", zh: "集中；焦点", ex: "Focus on the main idea.", band: "CET4" },
+          { en: "method", ipa: "/ˈmeθəd/", zh: "方法", ex: "Try a new study method.", band: "CET4" },
+          { en: "opportunity", ipa: "/ˌɒpəˈtjuːnəti/", zh: "机会", ex: "This is a rare opportunity.", band: "CET4" }
+        ]
+      },
+      {
+        id: "c6", title: "Unit 6 · CET-6 学术入门", band: "CET-6",
+        words: [
+          { en: "abandon", ipa: "/əˈbændən/", zh: "放弃；遗弃", ex: "Do not abandon your plan.", band: "CET6" },
+          { en: "accompany", ipa: "/əˈkʌmpəni/", zh: "陪伴；伴随", ex: "Pain may accompany fever.", band: "CET6" },
+          { en: "accumulate", ipa: "/əˈkjuːmjəleɪt/", zh: "积累", ex: "Dust accumulates quickly.", band: "CET6" },
+          { en: "adequate", ipa: "/ˈædɪkwət/", zh: "足够的；适当的", ex: "We need adequate sleep.", band: "CET6" },
+          { en: "advocate", ipa: "/ˈædvəkeɪt/", zh: "提倡；支持者", ex: "She advocates equal rights.", band: "CET6" },
+          { en: "allocate", ipa: "/ˈæləkeɪt/", zh: "分配", ex: "Allocate time for reading.", band: "CET6" },
+          { en: "analyze", ipa: "/ˈænəlaɪz/", zh: "分析", ex: "Analyze the survey results.", band: "CET6" },
+          { en: "approach", ipa: "/əˈprəʊtʃ/", zh: "方法；接近", ex: "Try a different approach.", band: "CET6" },
+          { en: "assume", ipa: "/əˈsjuːm/", zh: "假定；承担", ex: "Don't assume the answer.", band: "CET6" },
+          { en: "authority", ipa: "/ɔːˈθɒrəti/", zh: "权威；当局", ex: "Local authorities responded.", band: "CET6" }
+        ]
+      },
+      {
+        id: "c7", title: "Unit 7 · CET-6 抽象概念", band: "CET-6",
+        words: [
+          { en: "ambiguous", ipa: "/æmˈbɪɡjuəs/", zh: "模棱两可的", ex: "The rule is ambiguous.", band: "CET6" },
+          { en: "comprehensive", ipa: "/ˌkɒmprɪˈhensɪv/", zh: "全面的", ex: "We need a comprehensive plan.", band: "CET6" },
+          { en: "consequence", ipa: "/ˈkɒnsɪkwəns/", zh: "后果", ex: "Actions have consequences.", band: "CET6" },
+          { en: "contemporary", ipa: "/kənˈtemprəri/", zh: "当代的", ex: "Contemporary art is diverse.", band: "CET6" },
+          { en: "controversial", ipa: "/ˌkɒntrəˈvɜːʃl/", zh: "有争议的", ex: "It remains a controversial issue.", band: "CET6" },
+          { en: "crucial", ipa: "/ˈkruːʃl/", zh: "至关重要的", ex: "Timing is crucial.", band: "CET6" },
+          { en: "dominate", ipa: "/ˈdɒmɪneɪt/", zh: "支配；占优", ex: "One team dominated the match.", band: "CET6" },
+          { en: "emphasize", ipa: "/ˈemfəsaɪz/", zh: "强调", ex: "Teachers emphasize practice.", band: "CET6" },
+          { en: "inevitable", ipa: "/ɪnˈevɪtəbl/", zh: "不可避免的", ex: "Change is inevitable.", band: "CET6" },
+          { en: "perspective", ipa: "/pəˈspektɪv/", zh: "视角；观点", ex: "See it from another perspective.", band: "CET6" }
+        ]
+      },
+      {
+        id: "c8", title: "Unit 8 · CET-6 高阶进阶", band: "CET-6",
+        words: [
+          { en: "deteriorate", ipa: "/dɪˈtɪəriəreɪt/", zh: "恶化；变坏", ex: "Air quality may deteriorate.", band: "CET6" },
+          { en: "elaborate", ipa: "/ɪˈlæbərət/", zh: "详尽的；详述", ex: "Please elaborate on your idea.", band: "CET6" },
+          { en: "fluctuate", ipa: "/ˈflʌktʃueɪt/", zh: "波动", ex: "Prices fluctuate every week.", band: "CET6" },
+          { en: "integrate", ipa: "/ˈɪntɪɡreɪt/", zh: "整合；融入", ex: "Integrate theory with practice.", band: "CET6" },
+          { en: "manipulate", ipa: "/məˈnɪpjuleɪt/", zh: "操纵；操作", ex: "Do not manipulate the data.", band: "CET6" },
+          { en: "prevail", ipa: "/prɪˈveɪl/", zh: "盛行；占上风", ex: "Optimism may prevail.", band: "CET6" },
+          { en: "prominent", ipa: "/ˈprɒmɪnənt/", zh: "突出的；著名的", ex: "He is a prominent scientist.", band: "CET6" },
+          { en: "speculate", ipa: "/ˈspekjuleɪt/", zh: "推测；投机", ex: "Experts speculate about causes.", band: "CET6" },
+          { en: "undermine", ipa: "/ˌʌndəˈmaɪn/", zh: "削弱；损害", ex: "Rumors undermine trust.", band: "CET6" },
+          { en: "vulnerable", ipa: "/ˈvʌlnərəbl/", zh: "脆弱的；易受伤害的", ex: "Children are more vulnerable.", band: "CET6" }
+        ]
+      }
+    ];
+
+    const IELTS_UNITS = [
       {
         id: "u1", title: "Unit 1 · Band 4 日常基础", band: "Band 4",
         words: [
@@ -921,7 +1081,38 @@
       }
     ];
 
-    const ALL_WORDS = UNITS.flatMap((u) => u.words.map((w) => ({ ...w, unitId: u.id, unitTitle: u.title })));
+
+    function currentTrack() {
+      return state.track === "cet" ? "cet" : "ielts";
+    }
+    function getUnits() {
+      return currentTrack() === "cet" ? CET_UNITS : IELTS_UNITS;
+    }
+    function allWords() {
+      return getUnits().flatMap((u) => u.words.map((w) => ({ ...w, unitId: u.id, unitTitle: u.title, track: currentTrack() })));
+    }
+    function trackLabel(t) {
+      return (t || currentTrack()) === "cet" ? "四六级" : "雅思";
+    }
+    function applyBrand() {
+      const cet = currentTrack() === "cet";
+      document.getElementById("brandTitle").textContent = cet ? "四六级单词" : "雅思单词";
+      document.getElementById("brandSub").textContent = cet ? "CET-4 / CET-6 · 每日打卡" : "Band 4→8+ · 每日打卡";
+      document.title = cet ? "四六级单词闪卡" : "雅思单词闪卡";
+      document.querySelectorAll("#trackSwitch button").forEach((b) => {
+        b.classList.toggle("active", b.dataset.track === currentTrack());
+      });
+      const unitsTitle = document.getElementById("unitsTitle");
+      const unitsDesc = document.getElementById("unitsDesc");
+      if (unitsTitle) unitsTitle.textContent = cet ? "按四六级难度分单元" : "按雅思难度分单元";
+      if (unitsDesc) {
+        const n = allWords().length;
+        unitsDesc.innerHTML = cet
+          ? `从 CET-4 基础到 CET-6 高阶，建议按顺序学。共 <span id="totalWords">${n}</span> 词。`
+          : `从 Band 4 到 Band 8+，建议按顺序学。共 <span id="totalWords">${n}</span> 词。`;
+      }
+    }
+
 
     let state = loadState();
     let queue = [], index = 0, known = 0, unknown = [], flipped = false, mode = "daily", activity = "flash";
@@ -949,15 +1140,70 @@
       return `${y}年${Number(m)}月${Number(d)}日 周${week}`;
     }
     function loadState() {
-      const defaults = { wrongBook:{}, checkins:{}, streak:0, autoSpeak:false };
+      const defaults = {
+        wrongBook: {},
+        checkins: { cet: {}, ielts: {} },
+        streakByTrack: { cet: 0, ielts: 0 },
+        lastCheckinByTrack: { cet: null, ielts: null },
+        streak: 0,
+        autoSpeak: false,
+        track: "cet"
+      };
       try {
         const raw = JSON.parse(localStorage.getItem(STORAGE_KEY));
         if (!raw || typeof raw !== "object") return defaults;
         if (typeof raw.autoSpeak !== "boolean") raw.autoSpeak = false;
         if (!raw.wrongBook) raw.wrongBook = {};
-        if (!raw.checkins) raw.checkins = {};
+
+        const checkins = raw.checkins && typeof raw.checkins === "object" ? raw.checkins : {};
+        const cKeys = Object.keys(checkins);
+        const looksFlat = cKeys.some((k) => /^\d{4}-\d{2}-\d{2}$/.test(k));
+        if (looksFlat) {
+          raw.checkins = { ielts: { ...checkins }, cet: {} };
+        } else {
+          raw.checkins = {
+            cet: (checkins.cet && typeof checkins.cet === "object") ? checkins.cet : {},
+            ielts: (checkins.ielts && typeof checkins.ielts === "object") ? checkins.ielts : {}
+          };
+        }
+
+        const hasLegacyData =
+          Object.keys(raw.wrongBook).length > 0 ||
+          Object.keys(raw.checkins.ielts || {}).length > 0 ||
+          !!raw.lastCheckin ||
+          (typeof raw.streak === "number" && raw.streak > 0);
+
+        if (raw.track !== "cet" && raw.track !== "ielts") {
+          raw.track = hasLegacyData ? "ielts" : "cet";
+        }
+
+        if (!raw.streakByTrack || typeof raw.streakByTrack !== "object") {
+          raw.streakByTrack = {
+            cet: 0,
+            ielts: typeof raw.streak === "number" ? raw.streak : 0
+          };
+        } else {
+          if (typeof raw.streakByTrack.cet !== "number") raw.streakByTrack.cet = 0;
+          if (typeof raw.streakByTrack.ielts !== "number") {
+            raw.streakByTrack.ielts = typeof raw.streak === "number" ? raw.streak : 0;
+          }
+        }
+        if (!raw.lastCheckinByTrack || typeof raw.lastCheckinByTrack !== "object") {
+          raw.lastCheckinByTrack = { cet: null, ielts: raw.lastCheckin || null };
+        } else {
+          if (!("cet" in raw.lastCheckinByTrack)) raw.lastCheckinByTrack.cet = null;
+          if (!("ielts" in raw.lastCheckinByTrack)) raw.lastCheckinByTrack.ielts = raw.lastCheckin || null;
+        }
+
+        Object.keys(raw.wrongBook).forEach((k) => {
+          const item = raw.wrongBook[k];
+          if (item && typeof item === "object" && item.track !== "cet" && item.track !== "ielts") {
+            item.track = "ielts";
+          }
+        });
+
         return raw;
-      } catch { return defaults; }
+      } catch { return { ...defaults }; }
     }
     function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
     function hashSeed(str) {
@@ -972,14 +1218,19 @@
     }
     // Daily mix: slightly prefer earlier (easier) units, but include some harder ones
     function dailyWords(date) {
+      const units = getUnits();
       const weighted = [];
-      UNITS.forEach((u, ui) => {
-        const weight = Math.max(1, UNITS.length - ui);
-        u.words.forEach((w) => { for (let i=0;i<weight;i++) weighted.push({ ...w, unitId:u.id, unitTitle:u.title }); });
+      units.forEach((u, ui) => {
+        const weight = Math.max(1, units.length - ui);
+        u.words.forEach((w) => {
+          for (let i = 0; i < weight; i++) {
+            weighted.push({ ...w, unitId: u.id, unitTitle: u.title, track: currentTrack() });
+          }
+        });
       });
       const picked = [];
       const seen = new Set();
-      for (const w of seededShuffle(weighted, hashSeed(date + "-ielts"))) {
+      for (const w of seededShuffle(weighted, hashSeed(date + "-" + currentTrack()))) {
         if (seen.has(w.en)) continue;
         seen.add(w.en);
         picked.push(w);
@@ -993,17 +1244,34 @@
     }
     function wrongList() {
       if (!state.wrongBook) state.wrongBook = {};
-      return Object.values(state.wrongBook).sort((a,b)=>(b.misses||0)-(a.misses||0));
+      const t = currentTrack();
+      return Object.values(state.wrongBook)
+        .filter((w) => (w.track || "ielts") === t)
+        .sort((a,b)=>(b.misses||0)-(a.misses||0));
+    }
+    function wrongKey(word) {
+      const t = word.track || currentTrack();
+      return t + "::" + word.en;
     }
     function addWrong(word) {
       if (!state.wrongBook) state.wrongBook = {};
-      const prev = state.wrongBook[word.en];
-      state.wrongBook[word.en] = { ...word, misses:(prev?.misses||0)+1, lastMiss: todayKey() };
+      const t = currentTrack();
+      const entry = { ...word, track: t, misses: 0, lastMiss: todayKey() };
+      const key = wrongKey(entry);
+      // migrate legacy flat key
+      const prev = state.wrongBook[key] || (state.wrongBook[word.en] && (state.wrongBook[word.en].track || "ielts") === t ? state.wrongBook[word.en] : null);
+      if (state.wrongBook[word.en] && (state.wrongBook[word.en].track || "ielts") === t && key !== word.en) {
+        delete state.wrongBook[word.en];
+      }
+      state.wrongBook[key] = { ...entry, misses: (prev?.misses || 0) + 1, lastMiss: todayKey() };
       saveState();
     }
     function removeWrong(en) {
       if (!state.wrongBook) return;
-      delete state.wrongBook[en];
+      const t = currentTrack();
+      const key = t + "::" + en;
+      delete state.wrongBook[key];
+      if (state.wrongBook[en] && (state.wrongBook[en].track || "ielts") === t) delete state.wrongBook[en];
       saveState();
     }
     function setProgressBar(on, ratio) {
@@ -1117,22 +1385,37 @@
       }
     }
 
+    function trackCheckins() {
+      if (!state.checkins || typeof state.checkins !== "object") state.checkins = { cet: {}, ielts: {} };
+      if (!state.checkins.cet) state.checkins.cet = {};
+      if (!state.checkins.ielts) state.checkins.ielts = {};
+      return state.checkins[currentTrack()];
+    }
     function updateStreakUI(date) {
-      const checked = !!(state.checkins && state.checkins[date]);
-      document.getElementById("streakCount").textContent = state.streak || 0;
+      const bucket = trackCheckins();
+      const checked = !!(bucket && bucket[date]);
+      const streak = (state.streakByTrack && state.streakByTrack[currentTrack()]) || 0;
+      document.getElementById("streakCount").textContent = streak;
       const short = document.getElementById("checkStatusShort");
       short.textContent = checked ? "已打卡" : "未打卡";
       document.getElementById("checkStat").classList.toggle("ok", checked);
       document.getElementById("checkStat").classList.toggle("warn", !checked);
       document.getElementById("wrongCountStat").textContent = wrongList().length;
-      // keep a hidden compatibility node if referenced elsewhere — none; checkStatus removed from DOM intentionally replaced by short label
     }
     function markCheckin(date) {
-      if (!state.checkins) state.checkins = {};
-      if (!state.checkins[date]) {
-        state.checkins[date] = { at:new Date().toISOString(), known, unknown: unknown.length };
-        state.streak = state.lastCheckin === yesterdayKey(date) ? (state.streak||0)+1 : 1;
-        state.lastCheckin = date;
+      const t = currentTrack();
+      const bucket = trackCheckins();
+      if (!bucket[date]) {
+        bucket[date] = { at: new Date().toISOString(), known, unknown: unknown.length };
+        if (!state.streakByTrack) state.streakByTrack = { cet: 0, ielts: 0 };
+        if (!state.lastCheckinByTrack) state.lastCheckinByTrack = { cet: null, ielts: null };
+        const last = state.lastCheckinByTrack[t];
+        state.streakByTrack[t] = last === yesterdayKey(date) ? (state.streakByTrack[t] || 0) + 1 : 1;
+        state.lastCheckinByTrack[t] = date;
+        if (t === "ielts") {
+          state.streak = state.streakByTrack.ielts;
+          state.lastCheckin = date;
+        }
         saveState();
       }
       updateStreakUI(date);
@@ -1156,20 +1439,24 @@
       if (name !== "study" && name !== "spellPractice") els.progress.textContent = "—";
     }
     function renderHome() {
+      applyBrand();
       const date = todayKey();
       document.getElementById("dateLabel").textContent = formatDateCn(date);
       updateStreakUI(date);
-      const checked = !!(state.checkins && state.checkins[date]);
+      const checked = !!(trackCheckins()[date]);
       const wrongN = wrongList().length;
+      const wordsN = allWords().length;
+      const unitsN = getUnits().length;
+      const cet = currentTrack() === "cet";
       document.getElementById("homeTitle").textContent = checked ? "今日已打卡" : "今日 10 词";
       document.getElementById("homeDesc").textContent = checked
-        ? `已完成。词库 ${ALL_WORDS.length} 词，8 个单元按 Band 4→8+ 排序；错题本 ${wrongN} 个。`
-        : `每日 10 词（偏易混难）。单元页按雅思难度从易到难，建议顺序学。`;
+        ? `已完成。${trackLabel()}词库 ${wordsN} 词 / ${unitsN} 单元；错题本 ${wrongN} 个。`
+        : `每日 10 词（偏易混难）。当前：${trackLabel()} · ${cet ? "CET-4→CET-6" : "Band 4→8+"}。`;
       document.getElementById("startBtn").textContent = checked ? "再练今日词表" : "开始今日学习";
       document.getElementById("reviewWrongBtn").style.display = wrongN ? "block" : "none";
     }
     function unitWords(u) {
-      return u.words.map(w => ({...w, unitId:u.id, unitTitle:u.title}));
+      return u.words.map(w => ({...w, unitId:u.id, unitTitle:u.title, track: currentTrack()}));
     }
     function renderUnitRow(u, listEl, flashOnly) {
       const btn = document.createElement("button");
@@ -1188,21 +1475,25 @@
       listEl.appendChild(btn);
     }
     function renderUnits() {
-      document.getElementById("totalWords").textContent = ALL_WORDS.length;
+      applyBrand();
+      const tw = document.getElementById("totalWords");
+      if (tw) tw.textContent = allWords().length;
       const list = document.getElementById("unitList");
       list.innerHTML = "";
-      UNITS.forEach((u) => renderUnitRow(u, list, false));
+      getUnits().forEach((u) => renderUnitRow(u, list, false));
     }
     function renderSpellHub() {
+      applyBrand();
       const wrongN = wrongList().length;
       const hubWrong = document.getElementById("spellWrongHubBtn");
       if (hubWrong) hubWrong.style.display = wrongN ? "block" : "none";
       const list = document.getElementById("spellUnitList");
       if (!list) return;
       list.innerHTML = "";
-      UNITS.forEach((u) => renderUnitRow(u, list, true));
+      getUnits().forEach((u) => renderUnitRow(u, list, true));
     }
     function renderWrong() {
+      applyBrand();
       const items = wrongList();
       document.getElementById("wrongDesc").textContent = items.length
         ? `共 ${items.length} 个错词，按错过次数排序。`
@@ -1441,6 +1732,21 @@
       else start(list, "wrong");
     });
     document.getElementById("backHome").addEventListener("click", () => showTab("home"));
+    function setTrack(next) {
+      const t = next === "cet" ? "cet" : "ielts";
+      if (state.track === t) return;
+      if (TTS_OK) { try { speechSynthesis.cancel(); } catch (_) {} clearSpeakingUI(); }
+      state.track = t;
+      saveState();
+      activity = "flash";
+      applyBrand();
+      showTab("home");
+    }
+    document.getElementById("trackSwitch").addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-track]");
+      if (!btn) return;
+      setTrack(btn.dataset.track);
+    });
     els.tabs.addEventListener("click", (e) => {
       const btn = e.target.closest("button[data-tab]");
       if (!btn) return;
@@ -1448,6 +1754,7 @@
     });
 
     setupTtsUi();
+    applyBrand();
     document.getElementById("dateLabel").textContent = formatDateCn(todayKey());
     showTab("home");
   </script>
