@@ -329,13 +329,17 @@
       flex-shrink: 0;
     }
     #btnAgain, #btnKnow {
-      min-height: 54px;
-      font-size: 16px;
+      min-height: 56px;
+      font-size: 28px;
+      line-height: 1;
       border-radius: 16px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 0;
+      padding: 12px 14px;
+      letter-spacing: 0;
+      font-weight: 700;
     }
     #btnKnow {
       background: linear-gradient(180deg, #34d399, #16a34a);
@@ -608,7 +612,7 @@
         <button class="secondary" id="reviewWrongBtn" type="button">先刷错题本</button>
         <label class="auto-speak-row" id="autoSpeakRow">
           <span>🎧 自动朗读</span>
-          <input type="checkbox" id="autoSpeakToggle" checked />
+          <input type="checkbox" id="autoSpeakToggle" />
         </label>
       </div>
     </div>
@@ -653,8 +657,8 @@
         </div>
       </div>
       <div class="actions locked" id="markActions">
-        <button id="btnAgain" type="button" data-action="again">✕ 不认识</button>
-        <button id="btnKnow" type="button" data-action="know">✓ 认识</button>
+        <button id="btnAgain" type="button" data-action="again" aria-label="不认识" title="不认识">✕</button>
+        <button id="btnKnow" type="button" data-action="know" aria-label="认识" title="认识">✓</button>
       </div>
       <div class="tap" id="tapHint">先点卡片翻面，再选认识 / 不认识</div>
     </div>
@@ -826,11 +830,11 @@
       return `${y}年${Number(m)}月${Number(d)}日 周${week}`;
     }
     function loadState() {
-      const defaults = { wrongBook:{}, checkins:{}, streak:0, autoSpeak:true };
+      const defaults = { wrongBook:{}, checkins:{}, streak:0, autoSpeak:false };
       try {
         const raw = JSON.parse(localStorage.getItem(STORAGE_KEY));
         if (!raw || typeof raw !== "object") return defaults;
-        if (typeof raw.autoSpeak !== "boolean") raw.autoSpeak = true;
+        if (typeof raw.autoSpeak !== "boolean") raw.autoSpeak = false;
         if (!raw.wrongBook) raw.wrongBook = {};
         if (!raw.checkins) raw.checkins = {};
         return raw;
@@ -959,7 +963,7 @@
       }
       const toggle = document.getElementById("autoSpeakToggle");
       if (toggle) {
-        toggle.checked = state.autoSpeak !== false;
+        toggle.checked = state.autoSpeak === true;
         toggle.addEventListener("change", () => {
           state.autoSpeak = !!toggle.checked;
           saveState();
@@ -1102,7 +1106,7 @@
       flipped = false; els.card.classList.remove("flipped");
       setMarkLocked(true);
       clearSpeakingUI();
-      if (TTS_OK && state.autoSpeak !== false) {
+      if (TTS_OK && state.autoSpeak === true) {
         const wordBtn = document.getElementById("btnSpeakWord");
         setTimeout(() => {
           if (queue[index] === w) speakText(w.en, wordBtn);
