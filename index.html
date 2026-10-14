@@ -349,12 +349,7 @@
       background: linear-gradient(180deg, #fb7185, #e11d48);
       box-shadow: 0 10px 24px rgba(244, 63, 94, 0.25);
     }
-    .actions.locked #btnKnow,
-    .actions.locked #btnAgain {
-      opacity: 0.38;
-      filter: grayscale(0.25);
-      pointer-events: none;
-    }
+
     .tap {
       text-align: center;
       color: var(--muted2);
@@ -656,11 +651,11 @@
           </div>
         </div>
       </div>
-      <div class="actions locked" id="markActions">
+      <div class="actions" id="markActions">
         <button id="btnAgain" type="button" data-action="again" aria-label="不认识" title="不认识">✕</button>
         <button id="btnKnow" type="button" data-action="know" aria-label="认识" title="认识">✓</button>
       </div>
-      <div class="tap" id="tapHint">先点卡片翻面，再选认识 / 不认识</div>
+      <div class="tap" id="tapHint">点卡片看释义，或直接选 ✓ / ✕</div>
     </div>
 
     <div id="done" class="panel center">
@@ -891,11 +886,12 @@
       els.progressTrack.classList.toggle("on", !!on);
       els.progressFill.style.width = on ? `${Math.max(0, Math.min(1, ratio)) * 100}%` : "0%";
     }
-    function setMarkLocked(locked) {
-      els.markActions.classList.toggle("locked", !!locked);
-      document.getElementById("tapHint").textContent = locked
-        ? "先点卡片翻面，再选认识 / 不认识"
-        : "已翻面 · 选择认识或不认识";
+    function setMarkLocked(_locked) {
+      // Mark buttons always clickable; flip only reveals meaning.
+      els.markActions.classList.remove("locked");
+      document.getElementById("tapHint").textContent = flipped
+        ? "已翻面 · 可再点卡片翻回"
+        : "点卡片看释义，或直接选 ✓ / ✕";
     }
 
     const TTS_OK = typeof window !== "undefined" && "speechSynthesis" in window;
@@ -1120,7 +1116,6 @@
     }
     function mark(isKnown) {
       if (index >= queue.length) return;
-      if (!flipped) return;
       const w = queue[index];
       if (isKnown) { known += 1; removeWrong(w.en); }
       else { unknown.push(w); addWrong(w); }
@@ -1134,7 +1129,6 @@
     let markLock = false;
     function safeMark(isKnown) {
       if (markLock) return;
-      if (!flipped) return;
       markLock = true;
       try { mark(isKnown); } finally { setTimeout(() => { markLock = false; }, 180); }
     }
