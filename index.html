@@ -653,7 +653,7 @@
 
     .track-switch {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr;
       gap: 4px;
       padding: 4px;
       background: rgba(15, 23, 42, 0.72);
@@ -667,9 +667,9 @@
       background: transparent;
       color: var(--muted);
       border-radius: 12px;
-      padding: 12px 8px;
+      padding: 12px 4px;
       min-height: 46px;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 750;
       cursor: pointer;
       transition: background .2s ease, color .2s ease, transform .12s ease, box-shadow .2s ease;
@@ -714,8 +714,9 @@
       </div>
     </div>
 
-    <div class="track-switch" id="trackSwitch" role="tablist" aria-label="考试类型">
-      <button type="button" data-track="cet" class="active">四六级</button>
+    <div class="track-switch" id="trackSwitch" role="tablist" aria-label="学习轨道">
+      <button type="button" data-track="intro" class="active">入门</button>
+      <button type="button" data-track="cet">四六级</button>
       <button type="button" data-track="ielts">雅思</button>
     </div>
 
@@ -834,6 +835,289 @@
     const STORAGE_KEY = "flashcards-ielts-v1";
 
     // Units ordered easy → hard by typical IELTS band / AWL academic difficulty
+
+    const INTRO_UNITS = [
+      {
+        id: "i1", title: "Unit 1 · 入门 · 打招呼", band: "入门 A1",
+        words: [
+          { en: "hello", ipa: "/həˈləʊ/", zh: "你好", ex: "Hello!", band: "A1" },
+          { en: "hi", ipa: "/haɪ/", zh: "嗨", ex: "Hi, Tom.", band: "A1" },
+          { en: "bye", ipa: "/baɪ/", zh: "再见", ex: "Bye!", band: "A1" },
+          { en: "please", ipa: "/pliːz/", zh: "请", ex: "Please sit.", band: "A1" },
+          { en: "thanks", ipa: "/θæŋks/", zh: "谢谢", ex: "Thanks!", band: "A1" },
+          { en: "sorry", ipa: "/ˈsɒri/", zh: "对不起", ex: "I am sorry.", band: "A1" },
+          { en: "yes", ipa: "/jes/", zh: "是", ex: "Yes.", band: "A1" },
+          { en: "no", ipa: "/nəʊ/", zh: "不", ex: "No.", band: "A1" },
+          { en: "ok", ipa: "/ˌəʊˈkeɪ/", zh: "好的", ex: "OK.", band: "A1" },
+          { en: "name", ipa: "/neɪm/", zh: "名字", ex: "My name is Li.", band: "A1" },
+          { en: "good", ipa: "/ɡʊd/", zh: "好的", ex: "Good morning.", band: "A1" },
+          { en: "morning", ipa: "/ˈmɔːnɪŋ/", zh: "早上", ex: "Good morning.", band: "A1" },
+          { en: "night", ipa: "/naɪt/", zh: "夜晚", ex: "Good night.", band: "A1" },
+          { en: "welcome", ipa: "/ˈwelkəm/", zh: "欢迎", ex: "Welcome!", band: "A1" },
+          { en: "excuse", ipa: "/ɪkˈskjuːs/", zh: "打扰；原谅", ex: "Excuse me.", band: "A1" },
+        ]
+      },
+      {
+        id: "i2", title: "Unit 2 · 入门 · 人称代词", band: "入门 A1",
+        words: [
+          { en: "i", ipa: "/aɪ/", zh: "我", ex: "I am a student.", band: "A1" },
+          { en: "you", ipa: "/juː/", zh: "你", ex: "You are kind.", band: "A1" },
+          { en: "he", ipa: "/hiː/", zh: "他", ex: "He is tall.", band: "A1" },
+          { en: "she", ipa: "/ʃiː/", zh: "她", ex: "She is kind.", band: "A1" },
+          { en: "it", ipa: "/ɪt/", zh: "它", ex: "It is a cat.", band: "A1" },
+          { en: "we", ipa: "/wiː/", zh: "我们", ex: "We are friends.", band: "A1" },
+          { en: "they", ipa: "/ðeɪ/", zh: "他们", ex: "They are here.", band: "A1" },
+          { en: "my", ipa: "/maɪ/", zh: "我的", ex: "My bag.", band: "A1" },
+          { en: "your", ipa: "/jɔː/", zh: "你的", ex: "Your book.", band: "A1" },
+          { en: "his", ipa: "/hɪz/", zh: "他的", ex: "His name.", band: "A1" },
+          { en: "her", ipa: "/hɜː/", zh: "她的", ex: "Her pen.", band: "A1" },
+          { en: "our", ipa: "/aʊə/", zh: "我们的", ex: "Our school.", band: "A1" },
+          { en: "their", ipa: "/ðeə/", zh: "他们的", ex: "Their house.", band: "A1" },
+          { en: "me", ipa: "/miː/", zh: "我（宾格）", ex: "Help me.", band: "A1" },
+          { en: "him", ipa: "/hɪm/", zh: "他（宾格）", ex: "Call him.", band: "A1" },
+        ]
+      },
+      {
+        id: "i3", title: "Unit 3 · 入门 · 数字 1–15", band: "入门 A1",
+        words: [
+          { en: "one", ipa: "/wʌn/", zh: "一", ex: "One apple.", band: "A1" },
+          { en: "two", ipa: "/tuː/", zh: "二", ex: "Two cats.", band: "A1" },
+          { en: "three", ipa: "/θriː/", zh: "三", ex: "Three books.", band: "A1" },
+          { en: "four", ipa: "/fɔː/", zh: "四", ex: "Four birds.", band: "A1" },
+          { en: "five", ipa: "/faɪv/", zh: "五", ex: "Five stars.", band: "A1" },
+          { en: "six", ipa: "/sɪks/", zh: "六", ex: "Six eggs.", band: "A1" },
+          { en: "seven", ipa: "/ˈsevn/", zh: "七", ex: "Seven days.", band: "A1" },
+          { en: "eight", ipa: "/eɪt/", zh: "八", ex: "Eight chairs.", band: "A1" },
+          { en: "nine", ipa: "/naɪn/", zh: "九", ex: "Nine pens.", band: "A1" },
+          { en: "ten", ipa: "/ten/", zh: "十", ex: "Ten fingers.", band: "A1" },
+          { en: "eleven", ipa: "/ɪˈlevn/", zh: "十一", ex: "Eleven kids.", band: "A1" },
+          { en: "twelve", ipa: "/twelv/", zh: "十二", ex: "Twelve months.", band: "A1" },
+          { en: "thirteen", ipa: "/ˌθɜːˈtiːn/", zh: "十三", ex: "Thirteen chairs.", band: "A1" },
+          { en: "fourteen", ipa: "/ˌfɔːˈtiːn/", zh: "十四", ex: "Fourteen days.", band: "A1" },
+          { en: "fifteen", ipa: "/ˌfɪfˈtiːn/", zh: "十五", ex: "Fifteen students.", band: "A1" },
+        ]
+      },
+      {
+        id: "i4", title: "Unit 4 · 入门 · 颜色", band: "入门 A1",
+        words: [
+          { en: "red", ipa: "/red/", zh: "红色", ex: "A red apple.", band: "A1" },
+          { en: "blue", ipa: "/bluː/", zh: "蓝色", ex: "A blue sky.", band: "A1" },
+          { en: "green", ipa: "/ɡriːn/", zh: "绿色", ex: "Green grass.", band: "A1" },
+          { en: "yellow", ipa: "/ˈjeləʊ/", zh: "黄色", ex: "A yellow bus.", band: "A1" },
+          { en: "black", ipa: "/blæk/", zh: "黑色", ex: "A black dog.", band: "A1" },
+          { en: "white", ipa: "/waɪt/", zh: "白色", ex: "A white cat.", band: "A1" },
+          { en: "orange", ipa: "/ˈɒrɪndʒ/", zh: "橙色", ex: "An orange ball.", band: "A1" },
+          { en: "brown", ipa: "/braʊn/", zh: "棕色", ex: "Brown hair.", band: "A1" },
+          { en: "pink", ipa: "/pɪŋk/", zh: "粉色", ex: "A pink bag.", band: "A1" },
+          { en: "purple", ipa: "/ˈpɜːpl/", zh: "紫色", ex: "A purple flower.", band: "A1" },
+          { en: "gray", ipa: "/ɡreɪ/", zh: "灰色", ex: "A gray cloud.", band: "A1" },
+          { en: "color", ipa: "/ˈkʌlə/", zh: "颜色", ex: "What color is it?", band: "A1" },
+          { en: "dark", ipa: "/dɑːk/", zh: "深色的；暗的", ex: "It is dark.", band: "A1" },
+          { en: "light", ipa: "/laɪt/", zh: "浅色的；光", ex: "A light blue shirt.", band: "A1" },
+          { en: "bright", ipa: "/braɪt/", zh: "明亮的", ex: "A bright day.", band: "A1" },
+        ]
+      },
+      {
+        id: "i5", title: "Unit 5 · 入门 · 家庭", band: "入门 A1",
+        words: [
+          { en: "family", ipa: "/ˈfæməli/", zh: "家庭", ex: "My family.", band: "A1" },
+          { en: "mom", ipa: "/mɒm/", zh: "妈妈", ex: "This is my mom.", band: "A1" },
+          { en: "dad", ipa: "/dæd/", zh: "爸爸", ex: "My dad works.", band: "A1" },
+          { en: "mother", ipa: "/ˈmʌðə/", zh: "母亲", ex: "My mother cooks.", band: "A1" },
+          { en: "father", ipa: "/ˈfɑːðə/", zh: "父亲", ex: "My father reads.", band: "A1" },
+          { en: "sister", ipa: "/ˈsɪstə/", zh: "姐姐；妹妹", ex: "I have a sister.", band: "A1" },
+          { en: "brother", ipa: "/ˈbrʌðə/", zh: "哥哥；弟弟", ex: "My brother runs.", band: "A1" },
+          { en: "baby", ipa: "/ˈbeɪbi/", zh: "婴儿", ex: "A baby sleeps.", band: "A1" },
+          { en: "boy", ipa: "/bɔɪ/", zh: "男孩", ex: "A little boy.", band: "A1" },
+          { en: "girl", ipa: "/ɡɜːl/", zh: "女孩", ex: "A little girl.", band: "A1" },
+          { en: "friend", ipa: "/frend/", zh: "朋友", ex: "She is my friend.", band: "A1" },
+          { en: "man", ipa: "/mæn/", zh: "男人", ex: "A tall man.", band: "A1" },
+          { en: "woman", ipa: "/ˈwʊmən/", zh: "女人", ex: "A kind woman.", band: "A1" },
+          { en: "child", ipa: "/tʃaɪld/", zh: "孩子", ex: "The child plays.", band: "A1" },
+          { en: "people", ipa: "/ˈpiːpl/", zh: "人们", ex: "Many people.", band: "A1" },
+        ]
+      },
+      {
+        id: "i6", title: "Unit 6 · 入门 · 身体与物品", band: "入门 A1",
+        words: [
+          { en: "hand", ipa: "/hænd/", zh: "手", ex: "My hand.", band: "A1" },
+          { en: "eye", ipa: "/aɪ/", zh: "眼睛", ex: "Blue eyes.", band: "A1" },
+          { en: "ear", ipa: "/ɪə/", zh: "耳朵", ex: "Listen with your ear.", band: "A1" },
+          { en: "nose", ipa: "/nəʊz/", zh: "鼻子", ex: "My nose.", band: "A1" },
+          { en: "mouth", ipa: "/maʊθ/", zh: "嘴", ex: "Open your mouth.", band: "A1" },
+          { en: "head", ipa: "/hed/", zh: "头", ex: "My head hurts.", band: "A1" },
+          { en: "foot", ipa: "/fʊt/", zh: "脚", ex: "My left foot.", band: "A1" },
+          { en: "bag", ipa: "/bæɡ/", zh: "包", ex: "A school bag.", band: "A1" },
+          { en: "pen", ipa: "/pen/", zh: "钢笔", ex: "A blue pen.", band: "A1" },
+          { en: "book", ipa: "/bʊk/", zh: "书", ex: "An English book.", band: "A1" },
+          { en: "desk", ipa: "/desk/", zh: "书桌", ex: "Sit at the desk.", band: "A1" },
+          { en: "chair", ipa: "/tʃeə/", zh: "椅子", ex: "A small chair.", band: "A1" },
+          { en: "phone", ipa: "/fəʊn/", zh: "电话", ex: "My phone.", band: "A1" },
+          { en: "key", ipa: "/kiː/", zh: "钥匙", ex: "The door key.", band: "A1" },
+          { en: "door", ipa: "/dɔː/", zh: "门", ex: "Open the door.", band: "A1" },
+        ]
+      },
+      {
+        id: "i7", title: "Unit 7 · 入门 · 食物饮料", band: "入门 A1",
+        words: [
+          { en: "food", ipa: "/fuːd/", zh: "食物", ex: "I like food.", band: "A1" },
+          { en: "water", ipa: "/ˈwɔːtə/", zh: "水", ex: "Drink water.", band: "A1" },
+          { en: "rice", ipa: "/raɪs/", zh: "米饭", ex: "Eat rice.", band: "A1" },
+          { en: "bread", ipa: "/bred/", zh: "面包", ex: "Fresh bread.", band: "A1" },
+          { en: "egg", ipa: "/eɡ/", zh: "鸡蛋", ex: "An egg.", band: "A1" },
+          { en: "milk", ipa: "/mɪlk/", zh: "牛奶", ex: "Drink milk.", band: "A1" },
+          { en: "tea", ipa: "/tiː/", zh: "茶", ex: "A cup of tea.", band: "A1" },
+          { en: "coffee", ipa: "/ˈkɒfi/", zh: "咖啡", ex: "Hot coffee.", band: "A1" },
+          { en: "apple", ipa: "/ˈæpl/", zh: "苹果", ex: "A red apple.", band: "A1" },
+          { en: "banana", ipa: "/bəˈnɑːnə/", zh: "香蕉", ex: "A yellow banana.", band: "A1" },
+          { en: "fish", ipa: "/fɪʃ/", zh: "鱼", ex: "Eat fish.", band: "A1" },
+          { en: "meat", ipa: "/miːt/", zh: "肉", ex: "Cook meat.", band: "A1" },
+          { en: "fruit", ipa: "/fruːt/", zh: "水果", ex: "Eat fruit.", band: "A1" },
+          { en: "juice", ipa: "/dʒuːs/", zh: "果汁", ex: "Orange juice.", band: "A1" },
+          { en: "cake", ipa: "/keɪk/", zh: "蛋糕", ex: "A birthday cake.", band: "A1" },
+        ]
+      },
+      {
+        id: "i8", title: "Unit 8 · 入门 · 学校", band: "入门 A1",
+        words: [
+          { en: "school", ipa: "/skuːl/", zh: "学校", ex: "Go to school.", band: "A1" },
+          { en: "teacher", ipa: "/ˈtiːtʃə/", zh: "老师", ex: "My teacher.", band: "A1" },
+          { en: "student", ipa: "/ˈstjuːdnt/", zh: "学生", ex: "I am a student.", band: "A1" },
+          { en: "class", ipa: "/klɑːs/", zh: "课；班级", ex: "English class.", band: "A1" },
+          { en: "room", ipa: "/ruːm/", zh: "房间", ex: "A classroom.", band: "A1" },
+          { en: "homework", ipa: "/ˈhəʊmwɜːk/", zh: "作业", ex: "Do homework.", band: "A1" },
+          { en: "read", ipa: "/riːd/", zh: "读", ex: "Read a book.", band: "A1" },
+          { en: "write", ipa: "/raɪt/", zh: "写", ex: "Write your name.", band: "A1" },
+          { en: "listen", ipa: "/ˈlɪsn/", zh: "听", ex: "Listen to me.", band: "A1" },
+          { en: "speak", ipa: "/spiːk/", zh: "说", ex: "Speak English.", band: "A1" },
+          { en: "learn", ipa: "/lɜːn/", zh: "学习", ex: "Learn words.", band: "A1" },
+          { en: "study", ipa: "/ˈstʌdi/", zh: "学习", ex: "Study hard.", band: "A1" },
+          { en: "draw", ipa: "/drɔː/", zh: "画画", ex: "Draw a cat.", band: "A1" },
+          { en: "sing", ipa: "/sɪŋ/", zh: "唱歌", ex: "Sing a song.", band: "A1" },
+          { en: "play", ipa: "/pleɪ/", zh: "玩", ex: "Play a game.", band: "A1" },
+        ]
+      },
+      {
+        id: "i9", title: "Unit 9 · 入门 · 日常动词", band: "入门 A1",
+        words: [
+          { en: "go", ipa: "/ɡəʊ/", zh: "去", ex: "Go home.", band: "A1" },
+          { en: "come", ipa: "/kʌm/", zh: "来", ex: "Come here.", band: "A1" },
+          { en: "eat", ipa: "/iːt/", zh: "吃", ex: "Eat lunch.", band: "A1" },
+          { en: "drink", ipa: "/drɪŋk/", zh: "喝", ex: "Drink tea.", band: "A1" },
+          { en: "see", ipa: "/siː/", zh: "看见", ex: "I see you.", band: "A1" },
+          { en: "look", ipa: "/lʊk/", zh: "看", ex: "Look at me.", band: "A1" },
+          { en: "sit", ipa: "/sɪt/", zh: "坐", ex: "Sit down.", band: "A1" },
+          { en: "stand", ipa: "/stænd/", zh: "站", ex: "Stand up.", band: "A1" },
+          { en: "run", ipa: "/rʌn/", zh: "跑", ex: "Run fast.", band: "A1" },
+          { en: "walk", ipa: "/wɔːk/", zh: "走", ex: "Walk slowly.", band: "A1" },
+          { en: "sleep", ipa: "/sliːp/", zh: "睡觉", ex: "Sleep well.", band: "A1" },
+          { en: "wake", ipa: "/weɪk/", zh: "醒来", ex: "Wake up.", band: "A1" },
+          { en: "open", ipa: "/ˈəʊpən/", zh: "打开", ex: "Open it.", band: "A1" },
+          { en: "close", ipa: "/kləʊz/", zh: "关上", ex: "Close it.", band: "A1" },
+          { en: "help", ipa: "/help/", zh: "帮助", ex: "Help me.", band: "A1" },
+        ]
+      },
+      {
+        id: "i10", title: "Unit 10 · 入门 · 更多动词", band: "入门 A1",
+        words: [
+          { en: "have", ipa: "/hæv/", zh: "有", ex: "I have a pen.", band: "A1" },
+          { en: "like", ipa: "/laɪk/", zh: "喜欢", ex: "I like cats.", band: "A1" },
+          { en: "want", ipa: "/wɒnt/", zh: "想要", ex: "I want water.", band: "A1" },
+          { en: "need", ipa: "/niːd/", zh: "需要", ex: "I need help.", band: "A1" },
+          { en: "make", ipa: "/meɪk/", zh: "做；制作", ex: "Make a cake.", band: "A1" },
+          { en: "take", ipa: "/teɪk/", zh: "拿", ex: "Take a book.", band: "A1" },
+          { en: "give", ipa: "/ɡɪv/", zh: "给", ex: "Give me it.", band: "A1" },
+          { en: "put", ipa: "/pʊt/", zh: "放", ex: "Put it here.", band: "A1" },
+          { en: "find", ipa: "/faɪnd/", zh: "找到", ex: "Find your bag.", band: "A1" },
+          { en: "know", ipa: "/nəʊ/", zh: "知道", ex: "I know you.", band: "A1" },
+          { en: "think", ipa: "/θɪŋk/", zh: "想", ex: "I think so.", band: "A1" },
+          { en: "say", ipa: "/seɪ/", zh: "说", ex: "Say hello.", band: "A1" },
+          { en: "tell", ipa: "/tel/", zh: "告诉", ex: "Tell me.", band: "A1" },
+          { en: "ask", ipa: "/ɑːsk/", zh: "问", ex: "Ask a question.", band: "A1" },
+          { en: "love", ipa: "/lʌv/", zh: "爱", ex: "I love mom.", band: "A1" },
+        ]
+      },
+      {
+        id: "i11", title: "Unit 11 · 入门 · 形容词", band: "入门 A1",
+        words: [
+          { en: "big", ipa: "/bɪɡ/", zh: "大的", ex: "A big dog.", band: "A1" },
+          { en: "small", ipa: "/smɔːl/", zh: "小的", ex: "A small cat.", band: "A1" },
+          { en: "long", ipa: "/lɒŋ/", zh: "长的", ex: "A long stick.", band: "A1" },
+          { en: "short", ipa: "/ʃɔːt/", zh: "短的", ex: "Short hair.", band: "A1" },
+          { en: "tall", ipa: "/tɔːl/", zh: "高的", ex: "A tall man.", band: "A1" },
+          { en: "happy", ipa: "/ˈhæpi/", zh: "开心的", ex: "I am happy.", band: "A1" },
+          { en: "sad", ipa: "/sæd/", zh: "伤心的", ex: "Do not be sad.", band: "A1" },
+          { en: "hot", ipa: "/hɒt/", zh: "热的", ex: "Hot tea.", band: "A1" },
+          { en: "cold", ipa: "/kəʊld/", zh: "冷的", ex: "Cold water.", band: "A1" },
+          { en: "new", ipa: "/njuː/", zh: "新的", ex: "A new bag.", band: "A1" },
+          { en: "old", ipa: "/əʊld/", zh: "旧的；老的", ex: "An old book.", band: "A1" },
+          { en: "fast", ipa: "/fɑːst/", zh: "快的", ex: "Run fast.", band: "A1" },
+          { en: "slow", ipa: "/sləʊ/", zh: "慢的", ex: "A slow bus.", band: "A1" },
+          { en: "easy", ipa: "/ˈiːzi/", zh: "容易的", ex: "It is easy.", band: "A1" },
+          { en: "hard", ipa: "/hɑːd/", zh: "难的", ex: "It is hard.", band: "A1" },
+        ]
+      },
+      {
+        id: "i12", title: "Unit 12 · 入门 · 时间与星期", band: "入门 A1",
+        words: [
+          { en: "today", ipa: "/təˈdeɪ/", zh: "今天", ex: "Today is Monday.", band: "A1" },
+          { en: "tomorrow", ipa: "/təˈmɒrəʊ/", zh: "明天", ex: "See you tomorrow.", band: "A1" },
+          { en: "yesterday", ipa: "/ˈjestədeɪ/", zh: "昨天", ex: "I rested yesterday.", band: "A1" },
+          { en: "now", ipa: "/naʊ/", zh: "现在", ex: "Do it now.", band: "A1" },
+          { en: "day", ipa: "/deɪ/", zh: "天", ex: "A sunny day.", band: "A1" },
+          { en: "week", ipa: "/wiːk/", zh: "星期", ex: "This week.", band: "A1" },
+          { en: "year", ipa: "/jɪə/", zh: "年", ex: "This year.", band: "A1" },
+          { en: "time", ipa: "/taɪm/", zh: "时间", ex: "What time is it?", band: "A1" },
+          { en: "monday", ipa: "/ˈmʌndeɪ/", zh: "星期一", ex: "On Monday.", band: "A1" },
+          { en: "friday", ipa: "/ˈfraɪdeɪ/", zh: "星期五", ex: "On Friday.", band: "A1" },
+          { en: "sunday", ipa: "/ˈsʌndeɪ/", zh: "星期日", ex: "On Sunday.", band: "A1" },
+          { en: "hour", ipa: "/ˈaʊə/", zh: "小时", ex: "One hour.", band: "A1" },
+          { en: "minute", ipa: "/ˈmɪnɪt/", zh: "分钟", ex: "Five minutes.", band: "A1" },
+          { en: "early", ipa: "/ˈɜːli/", zh: "早", ex: "Get up early.", band: "A1" },
+          { en: "late", ipa: "/leɪt/", zh: "晚", ex: "Do not be late.", band: "A1" },
+        ]
+      },
+      {
+        id: "i13", title: "Unit 13 · 入门 · 地点与方位", band: "入门 A1",
+        words: [
+          { en: "home", ipa: "/həʊm/", zh: "家", ex: "Go home.", band: "A1" },
+          { en: "park", ipa: "/pɑːk/", zh: "公园", ex: "In the park.", band: "A1" },
+          { en: "shop", ipa: "/ʃɒp/", zh: "商店", ex: "A small shop.", band: "A1" },
+          { en: "street", ipa: "/striːt/", zh: "街道", ex: "On the street.", band: "A1" },
+          { en: "city", ipa: "/ˈsɪti/", zh: "城市", ex: "A big city.", band: "A1" },
+          { en: "country", ipa: "/ˈkʌntri/", zh: "国家；乡下", ex: "My country.", band: "A1" },
+          { en: "here", ipa: "/hɪə/", zh: "这里", ex: "Come here.", band: "A1" },
+          { en: "there", ipa: "/ðeə/", zh: "那里", ex: "Look there.", band: "A1" },
+          { en: "in", ipa: "/ɪn/", zh: "在…里", ex: "In the box.", band: "A1" },
+          { en: "on", ipa: "/ɒn/", zh: "在…上", ex: "On the desk.", band: "A1" },
+          { en: "under", ipa: "/ˈʌndə/", zh: "在…下", ex: "Under the bed.", band: "A1" },
+          { en: "near", ipa: "/nɪə/", zh: "靠近", ex: "Near the school.", band: "A1" },
+          { en: "left", ipa: "/left/", zh: "左边", ex: "Turn left.", band: "A1" },
+          { en: "right", ipa: "/raɪt/", zh: "右边", ex: "Turn right.", band: "A1" },
+          { en: "up", ipa: "/ʌp/", zh: "向上", ex: "Look up.", band: "A1" },
+        ]
+      },
+      {
+        id: "i14", title: "Unit 14 · 入门 · 简单句子词", band: "入门 A1",
+        words: [
+          { en: "am", ipa: "/æm/", zh: "是（I am）", ex: "I am fine.", band: "A1" },
+          { en: "is", ipa: "/ɪz/", zh: "是（he/she/it）", ex: "She is happy.", band: "A1" },
+          { en: "are", ipa: "/ɑː/", zh: "是（you/we/they）", ex: "You are kind.", band: "A1" },
+          { en: "this", ipa: "/ðɪs/", zh: "这个", ex: "This is a pen.", band: "A1" },
+          { en: "that", ipa: "/ðæt/", zh: "那个", ex: "That is a bag.", band: "A1" },
+          { en: "what", ipa: "/wɒt/", zh: "什么", ex: "What is this?", band: "A1" },
+          { en: "where", ipa: "/weə/", zh: "哪里", ex: "Where are you?", band: "A1" },
+          { en: "who", ipa: "/huː/", zh: "谁", ex: "Who is he?", band: "A1" },
+          { en: "how", ipa: "/haʊ/", zh: "怎样", ex: "How are you?", band: "A1" },
+          { en: "and", ipa: "/ænd/", zh: "和", ex: "You and me.", band: "A1" },
+          { en: "but", ipa: "/bʌt/", zh: "但是", ex: "I am tired but happy.", band: "A1" },
+          { en: "with", ipa: "/wɪð/", zh: "和…一起", ex: "Come with me.", band: "A1" },
+          { en: "for", ipa: "/fɔː/", zh: "为了", ex: "A gift for you.", band: "A1" },
+          { en: "from", ipa: "/frɒm/", zh: "来自", ex: "I am from China.", band: "A1" },
+          { en: "can", ipa: "/kæn/", zh: "能", ex: "I can swim.", band: "A1" },
+        ]
+      },
+    ];
 
     const CET_UNITS = [
       {
@@ -1472,33 +1756,51 @@
     ];
 
     function currentTrack() {
-      return state.track === "cet" ? "cet" : "ielts";
+      const t = state && state.track;
+      if (t === "cet" || t === "ielts" || t === "intro") return t;
+      return "intro";
     }
     function getUnits() {
-      return currentTrack() === "cet" ? CET_UNITS : IELTS_UNITS;
+      const t = currentTrack();
+      if (t === "cet") return CET_UNITS;
+      if (t === "ielts") return IELTS_UNITS;
+      return INTRO_UNITS;
     }
     function allWords() {
       return getUnits().flatMap((u) => u.words.map((w) => ({ ...w, unitId: u.id, unitTitle: u.title, track: currentTrack() })));
     }
     function trackLabel(t) {
-      return (t || currentTrack()) === "cet" ? "四六级" : "雅思";
+      const x = t || currentTrack();
+      if (x === "cet") return "四六级";
+      if (x === "ielts") return "雅思";
+      return "入门";
     }
     function applyBrand() {
-      const cet = currentTrack() === "cet";
-      document.getElementById("brandTitle").textContent = cet ? "四六级单词" : "雅思单词";
-      document.getElementById("brandSub").textContent = cet ? "从最简单开始 · CET 由易到难" : "从最简单开始 · 雅思由易到难";
-      document.title = cet ? "四六级单词闪卡" : "雅思单词闪卡";
+      const t = currentTrack();
+      const title = t === "cet" ? "四六级单词" : t === "ielts" ? "雅思单词" : "入门英语";
+      const sub = t === "cet" ? "从最简单开始 · CET 由易到难"
+        : t === "ielts" ? "从最简单开始 · 雅思由易到难"
+        : "零基础入门 · 从最简单开始";
+      document.getElementById("brandTitle").textContent = title;
+      document.getElementById("brandSub").textContent = sub;
+      document.title = title + "闪卡";
       document.querySelectorAll("#trackSwitch button").forEach((b) => {
-        b.classList.toggle("active", b.dataset.track === currentTrack());
+        b.classList.toggle("active", b.dataset.track === t);
       });
       const unitsTitle = document.getElementById("unitsTitle");
       const unitsDesc = document.getElementById("unitsDesc");
-      if (unitsTitle) unitsTitle.textContent = cet ? "按四六级难度分单元" : "按雅思难度分单元";
+      if (unitsTitle) {
+        unitsTitle.textContent = t === "cet" ? "按四六级难度分单元"
+          : t === "ielts" ? "按雅思难度分单元"
+          : "入门单元 · 从最简单开始";
+      }
       if (unitsDesc) {
         const n = allWords().length;
-        unitsDesc.innerHTML = cet
+        unitsDesc.innerHTML = t === "cet"
           ? `从最简单开始，由易到难（CET-4→CET-6）。建议按顺序学。共 <span id="totalWords">${n}</span> 词。`
-          : `从最简单开始，由易到难（Band 3→8+）。建议按顺序学。共 <span id="totalWords">${n}</span> 词。`;
+          : t === "ielts"
+          ? `从最简单开始，由易到难（Band 3→8+）。建议按顺序学。共 <span id="totalWords">${n}</span> 词。`
+          : `零基础专用：打招呼、数字、颜色、家庭…建议按顺序学。共 <span id="totalWords">${n}</span> 词。`;
       }
     }
 
@@ -1531,12 +1833,12 @@
     function loadState() {
       const defaults = {
         wrongBook: {},
-        checkins: { cet: {}, ielts: {} },
-        streakByTrack: { cet: 0, ielts: 0 },
-        lastCheckinByTrack: { cet: null, ielts: null },
+        checkins: { intro: {}, cet: {}, ielts: {} },
+        streakByTrack: { intro: 0, cet: 0, ielts: 0 },
+        lastCheckinByTrack: { intro: null, cet: null, ielts: null },
         streak: 0,
         autoSpeak: false,
-        track: "cet"
+        track: "intro"
       };
       try {
         const raw = JSON.parse(localStorage.getItem(STORAGE_KEY));
@@ -1548,9 +1850,10 @@
         const cKeys = Object.keys(checkins);
         const looksFlat = cKeys.some((k) => /^\d{4}-\d{2}-\d{2}$/.test(k));
         if (looksFlat) {
-          raw.checkins = { ielts: { ...checkins }, cet: {} };
+          raw.checkins = { intro: {}, ielts: { ...checkins }, cet: {} };
         } else {
           raw.checkins = {
+            intro: (checkins.intro && typeof checkins.intro === "object") ? checkins.intro : {},
             cet: (checkins.cet && typeof checkins.cet === "object") ? checkins.cet : {},
             ielts: (checkins.ielts && typeof checkins.ielts === "object") ? checkins.ielts : {}
           };
@@ -1559,34 +1862,39 @@
         const hasLegacyData =
           Object.keys(raw.wrongBook).length > 0 ||
           Object.keys(raw.checkins.ielts || {}).length > 0 ||
+          Object.keys(raw.checkins.cet || {}).length > 0 ||
           !!raw.lastCheckin ||
           (typeof raw.streak === "number" && raw.streak > 0);
 
-        if (raw.track !== "cet" && raw.track !== "ielts") {
+        // Keep saved track; only fill missing track with legacy rule (do not force reset)
+        if (raw.track !== "cet" && raw.track !== "ielts" && raw.track !== "intro") {
           raw.track = hasLegacyData ? "ielts" : "cet";
         }
 
         if (!raw.streakByTrack || typeof raw.streakByTrack !== "object") {
           raw.streakByTrack = {
+            intro: 0,
             cet: 0,
             ielts: typeof raw.streak === "number" ? raw.streak : 0
           };
         } else {
+          if (typeof raw.streakByTrack.intro !== "number") raw.streakByTrack.intro = 0;
           if (typeof raw.streakByTrack.cet !== "number") raw.streakByTrack.cet = 0;
           if (typeof raw.streakByTrack.ielts !== "number") {
             raw.streakByTrack.ielts = typeof raw.streak === "number" ? raw.streak : 0;
           }
         }
         if (!raw.lastCheckinByTrack || typeof raw.lastCheckinByTrack !== "object") {
-          raw.lastCheckinByTrack = { cet: null, ielts: raw.lastCheckin || null };
+          raw.lastCheckinByTrack = { intro: null, cet: null, ielts: raw.lastCheckin || null };
         } else {
+          if (!("intro" in raw.lastCheckinByTrack)) raw.lastCheckinByTrack.intro = null;
           if (!("cet" in raw.lastCheckinByTrack)) raw.lastCheckinByTrack.cet = null;
           if (!("ielts" in raw.lastCheckinByTrack)) raw.lastCheckinByTrack.ielts = raw.lastCheckin || null;
         }
 
         Object.keys(raw.wrongBook).forEach((k) => {
           const item = raw.wrongBook[k];
-          if (item && typeof item === "object" && item.track !== "cet" && item.track !== "ielts") {
+          if (item && typeof item === "object" && item.track !== "cet" && item.track !== "ielts" && item.track !== "intro") {
             item.track = "ielts";
           }
         });
@@ -1611,27 +1919,38 @@
       const bucket = trackCheckins();
       const checkinCount = Object.keys(bucket || {}).length;
       const streak = (state.streakByTrack && state.streakByTrack[currentTrack()]) || 0;
-      // Beginners: few check-ins / low streak → almost only Unit 1–2
+      const onIntro = currentTrack() === "intro";
+      // Beginners: few check-ins / low streak → almost only Unit 1–2 (stronger on intro)
       const beginner = checkinCount < 3 && streak < 3;
       const early = checkinCount < 7 && streak < 7;
       const weighted = [];
       units.forEach((u, ui) => {
         let weight;
-        if (beginner) {
+        if (onIntro && beginner) {
+          if (ui === 0) weight = 60;
+          else if (ui === 1) weight = 28;
+          else if (ui === 2) weight = 4;
+          else if (ui < 4) weight = 1;
+          else weight = 0; // skip harder intro units until some progress
+        } else if (beginner) {
           if (ui === 0) weight = 40;
           else if (ui === 1) weight = 22;
           else if (ui === 2) weight = 6;
           else if (ui < 5) weight = 2;
           else weight = 1;
+        } else if (onIntro && early) {
+          if (ui === 0) weight = 28;
+          else if (ui === 1) weight = 18;
+          else if (ui === 2) weight = 10;
+          else weight = Math.max(1, Math.round(Math.pow(Math.max(1, units.length - ui), 1.5)));
         } else if (early) {
-          // Still heavily prefer early units
           weight = Math.max(1, Math.round(Math.pow(Math.max(1, units.length - ui), 1.7)));
           if (ui === 0) weight = Math.max(weight, 18);
           if (ui === 1) weight = Math.max(weight, 12);
         } else {
-          // Long-term: easy units still dominate, hard appear sparingly
           weight = Math.max(1, Math.round(Math.pow(Math.max(1, units.length - ui), 1.35)));
         }
+        if (weight < 1) return;
         u.words.forEach((w) => {
           for (let i = 0; i < weight; i++) {
             weighted.push({ ...w, unitId: u.id, unitTitle: u.title, track: currentTrack() });
@@ -1796,7 +2115,8 @@
     }
 
     function trackCheckins() {
-      if (!state.checkins || typeof state.checkins !== "object") state.checkins = { cet: {}, ielts: {} };
+      if (!state.checkins || typeof state.checkins !== "object") state.checkins = { intro: {}, cet: {}, ielts: {} };
+      if (!state.checkins.intro) state.checkins.intro = {};
       if (!state.checkins.cet) state.checkins.cet = {};
       if (!state.checkins.ielts) state.checkins.ielts = {};
       return state.checkins[currentTrack()];
@@ -1817,8 +2137,8 @@
       const bucket = trackCheckins();
       if (!bucket[date]) {
         bucket[date] = { at: new Date().toISOString(), known, unknown: unknown.length };
-        if (!state.streakByTrack) state.streakByTrack = { cet: 0, ielts: 0 };
-        if (!state.lastCheckinByTrack) state.lastCheckinByTrack = { cet: null, ielts: null };
+        if (!state.streakByTrack) state.streakByTrack = { intro: 0, cet: 0, ielts: 0 };
+        if (!state.lastCheckinByTrack) state.lastCheckinByTrack = { intro: null, cet: null, ielts: null };
         const last = state.lastCheckinByTrack[t];
         state.streakByTrack[t] = last === yesterdayKey(date) ? (state.streakByTrack[t] || 0) + 1 : 1;
         state.lastCheckinByTrack[t] = date;
@@ -1857,11 +2177,12 @@
       const wrongN = wrongList().length;
       const wordsN = allWords().length;
       const unitsN = getUnits().length;
-      const cet = currentTrack() === "cet";
       document.getElementById("homeTitle").textContent = checked ? "今日已打卡" : "今日 10 词";
       document.getElementById("homeDesc").textContent = checked
         ? `已完成。${trackLabel()}词库 ${wordsN} 词 / ${unitsN} 单元；错题本 ${wrongN} 个。从最简单单元练起。`
-        : `从最简单开始，由易到难。每日 10 词（新手更偏 Unit 1–2）。当前：${trackLabel()}。`;
+        : currentTrack() === "intro"
+          ? `零基础入门：从最简单开始。每日 10 词（新手几乎只练 Unit 1–2）。`
+          : `从最简单开始，由易到难。每日 10 词（新手更偏 Unit 1–2）。当前：${trackLabel()}。`;
       document.getElementById("startBtn").textContent = checked ? "再练今日词表" : "开始今日学习";
       document.getElementById("reviewWrongBtn").style.display = wrongN ? "block" : "none";
     }
@@ -2143,7 +2464,7 @@
     });
     document.getElementById("backHome").addEventListener("click", () => showTab("home"));
     function setTrack(next) {
-      const t = next === "cet" ? "cet" : "ielts";
+      const t = next === "cet" || next === "ielts" || next === "intro" ? next : "intro";
       if (state.track === t) return;
       if (TTS_OK) { try { speechSynthesis.cancel(); } catch (_) {} clearSpeakingUI(); }
       state.track = t;
